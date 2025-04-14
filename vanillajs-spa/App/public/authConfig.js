@@ -5,7 +5,7 @@
  */
 const msalConfig = {
     auth: {
-
+         clientId: "Enter_the_Application_Id_Here",
          // WORKFORCE TENANT
          authority: "https://login.microsoftonline.com/Enter_the_Tenant_Info_Here", //  Replace the placeholder with your tenant info
          // EXTERNAL TENANT
