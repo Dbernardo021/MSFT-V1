@@ -852,7 +852,7 @@
             });
             
             // Only update button styles if event exists and has a target
-            if (typeof event !== 'undefined' && event && event.target) {
+            if (typeof event !== 'undefined' && event && event.target && event.target.classList) {
                 event.target.classList.add('bg-blue-600', 'text-white');
                 event.target.classList.remove('hover:bg-gray-700', 'text-gray-300');
             }
@@ -953,6 +953,9 @@
             updateActiveAlerts(1);
             addRecentActivity('🚨 EMERGENCY STATUS ACTIVATED for Daniel Bernardo (manual)', 'CRITICAL');
             
+            // Update map markers to show emergency status
+            updateMapMarkers();
+            
             // Auto-send status check message
             setTimeout(() => {
                 sendQuickMessage('status_check');
@@ -964,6 +967,9 @@
             isEmergencyActive = true;
             updateActiveAlerts(1);
             addRecentActivity(`🚨 EMERGENCY STATUS ACTIVATED for Daniel Bernardo (elevated vitals: HR ${heartRate}, Stress ${stressLevel})`, 'CRITICAL');
+            
+            // Update map markers to show emergency status
+            updateMapMarkers();
             
             // Auto-send status check message
             setTimeout(() => {
