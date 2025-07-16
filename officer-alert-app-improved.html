@@ -1,0 +1,1619 @@
+<!DOCTYPE html><html lang="en"><head devin-hidden="true">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONA Technologies - Tactical Operations Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* IMPROVED: Toned down emergency animation - changed from 1s to 2s, gentler opacity change */
+        .emergency-pulse {
+            animation: pulse 2s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.05); }
+        }
+        
+        /* IMPROVED: Better text visibility and contrast */
+        .officer-name {
+            color: #1f2937 !important;
+            font-weight: 600;
+        }
+        
+        .status-text {
+            color: #374151 !important;
+        }
+        
+        /* IMPROVED: Enhanced emergency clear button styling */
+        .emergency-clear-btn {
+            background-color: #dc2626;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .emergency-clear-btn:hover {
+            background-color: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* IMPROVED: Emergency active state styling */
+        .emergency-active {
+            border: 2px solid #dc2626;
+            background-color: rgba(220, 38, 38, 0.1);
+            box-shadow: 0 0 20px rgba(220, 38, 38, 0.3);
+        }
+        
+        .message-notification {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.fixed{position:fixed}.inset-0{inset:0px}.right-4{right:1rem}.top-4{top:1rem}.z-50{z-index:50}.mx-4{margin-left:1rem;margin-right:1rem}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-auto{margin-left:auto}.mr-2{margin-right:0.5rem}.mt-2{margin-top:0.5rem}.mt-6{margin-top:1.5rem}.mb-3{margin-bottom:0.75rem}.ml-1{margin-left:0.25rem}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-2{height:0.5rem}.h-20{height:5rem}.h-3{height:0.75rem}.h-40{height:10rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-96{height:24rem}.h-screen{height:100vh}.max-h-60{max-height:15rem}.max-h-screen{max-height:100vh}.w-2{width:0.5rem}.w-3{width:0.75rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-64{width:16rem}.w-8{width:2rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-md{max-width:28rem}.flex-1{flex:1 1 0%}.resize-none{resize:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-2{gap:0.5rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-x-2 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.5rem * var(--tw-space-x-reverse));margin-left:calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))}.space-x-3 > :not([hidden]) ~ :not([hidden]){--tw-space-x-reverse:0;margin-right:calc(0.75rem * var(--tw-space-x-reverse));margin-left:calc(0.75rem * calc(1 - var(--tw-space-x-reverse)))}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-auto{overflow:auto}.overflow-y-auto{overflow-y:auto}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.border{border-width:1px}.border-gray-600{--tw-border-opacity:1;border-color:rgb(75 85 99 / var(--tw-border-opacity, 1))}.bg-gray-900{--tw-bg-opacity:1;background-color:rgb(17 24 39 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-blue-400{--tw-bg-opacity:1;background-color:rgb(96 165 250 / var(--tw-bg-opacity, 1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246 / var(--tw-bg-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-gray-600{--tw-bg-opacity:1;background-color:rgb(75 85 99 / var(--tw-bg-opacity, 1))}.bg-gray-700{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.bg-gray-800{--tw-bg-opacity:1;background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1))}.bg-green-400{--tw-bg-opacity:1;background-color:rgb(74 222 128 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-green-600{--tw-bg-opacity:1;background-color:rgb(22 163 74 / var(--tw-bg-opacity, 1))}.bg-orange-500{--tw-bg-opacity:1;background-color:rgb(249 115 22 / var(--tw-bg-opacity, 1))}.bg-orange-600{--tw-bg-opacity:1;background-color:rgb(234 88 12 / var(--tw-bg-opacity, 1))}.bg-purple-600{--tw-bg-opacity:1;background-color:rgb(147 51 234 / var(--tw-bg-opacity, 1))}.bg-red-400{--tw-bg-opacity:1;background-color:rgb(248 113 113 / var(--tw-bg-opacity, 1))}.bg-red-500{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-yellow-600{--tw-bg-opacity:1;background-color:rgb(202 138 4 / var(--tw-bg-opacity, 1))}.bg-gray-500{--tw-bg-opacity:1;background-color:rgb(107 114 128 / var(--tw-bg-opacity, 1))}.bg-yellow-500{--tw-bg-opacity:1;background-color:rgb(234 179 8 / var(--tw-bg-opacity, 1))}.bg-opacity-50{--tw-bg-opacity:0.5}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-gray-300{--tw-text-opacity:1;color:rgb(209 213 219 / var(--tw-text-opacity, 1))}.text-gray-400{--tw-text-opacity:1;color:rgb(156 163 175 / var(--tw-text-opacity, 1))}.text-green-400{--tw-text-opacity:1;color:rgb(74 222 128 / var(--tw-text-opacity, 1))}.text-orange-400{--tw-text-opacity:1;color:rgb(251 146 60 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.hover\:bg-blue-600:hover{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-gray-700:hover{--tw-bg-opacity:1;background-color:rgb(55 65 81 / var(--tw-bg-opacity, 1))}.hover\:bg-green-700:hover{--tw-bg-opacity:1;background-color:rgb(21 128 61 / var(--tw-bg-opacity, 1))}.hover\:bg-orange-600:hover{--tw-bg-opacity:1;background-color:rgb(234 88 12 / var(--tw-bg-opacity, 1))}.hover\:bg-orange-700:hover{--tw-bg-opacity:1;background-color:rgb(194 65 12 / var(--tw-bg-opacity, 1))}.hover\:bg-purple-700:hover{--tw-bg-opacity:1;background-color:rgb(126 34 206 / var(--tw-bg-opacity, 1))}.hover\:bg-red-700:hover{--tw-bg-opacity:1;background-color:rgb(185 28 28 / var(--tw-bg-opacity, 1))}.hover\:bg-yellow-700:hover{--tw-bg-opacity:1;background-color:rgb(161 98 7 / var(--tw-bg-opacity, 1))}.hover\:bg-red-600:hover{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-blue-500:focus{--tw-border-opacity:1;border-color:rgb(59 130 246 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}@media (min-width: 768px){.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:col-span-2{grid-column:span 2 / span 2}.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.lg\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}}</style></head>
+<body class="bg-gray-900 text-white">
+    <div class="flex h-screen">
+        <nav class="w-64 bg-gray-800 p-4">
+            <div class="mb-8">
+                <h1 class="text-xl font-bold text-blue-400">ONA TECHNOLOGIES</h1>
+                <p class="text-sm text-gray-400">TACTICAL OPERATIONS CENTER</p>
+            </div>
+            
+            <div class="space-y-2">
+                <button onclick="showSection('dashboard')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="0" devin-tagname="BUTTON">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                    </svg>
+                    <span>Dashboard</span>
+                </button>
+                
+                <button onclick="showSection('officers')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="1" devin-tagname="BUTTON">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                    </svg>
+                    <span>Officers</span>
+                </button>
+                
+                <button onclick="showSection('map')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="2" devin-tagname="BUTTON">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Map</span>
+                </button>
+                
+                <button onclick="showSection('alerts')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="3" devin-tagname="BUTTON">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Alerts</span>
+                </button>
+
+                <button onclick="showSection('messages')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="4" devin-tagname="BUTTON">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                    </svg>
+                    <span class="bg-blue-600 text-white">Messages</span>
+                    <span id="messageCount" class="bg-red-500 text-white text-xs rounded-full px-2 py-1 ml-auto hidden" devin-hidden="true">0</span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="flex-1 p-6 overflow-auto" devin-tagname="MAIN" devin-scrollable="true">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section hidden" devin-hidden="true">
+                <div class="mb-6" devin-hidden="true">
+                    <h1 class="text-3xl font-bold text-white mb-2" devin-hidden="true">ONA TECHNOLOGIES TACTICAL DASHBOARD</h1>
+                    <p class="text-gray-400" devin-hidden="true">TACTICAL OPERATIONS CENTER - REAL-TIME OFFICER MONITORING</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" devin-hidden="true">
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <p class="text-gray-400 text-sm" devin-hidden="true">Total Officers</p>
+                                <p class="text-3xl font-bold text-white" devin-hidden="true">1</p>
+                            </div>
+                            <svg class="w-8 h-8 text-blue-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <p class="text-gray-400 text-sm" devin-hidden="true">On Duty</p>
+                                <p class="text-3xl font-bold text-green-400" devin-hidden="true">1</p>
+                            </div>
+                            <svg class="w-8 h-8 text-green-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <p class="text-gray-400 text-sm" devin-hidden="true">Active Alerts</p>
+                                <p class="text-3xl font-bold text-red-400" id="activeAlertsCount" devin-hidden="true">0</p>
+                            </div>
+                            <svg class="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <p class="text-gray-400 text-sm" devin-hidden="true">Connected Devices</p>
+                                <p class="text-3xl font-bold text-orange-400" devin-hidden="true">1</p>
+                            </div>
+                            <svg class="w-8 h-8 text-orange-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clip-rule="evenodd" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                    <h2 class="text-xl font-bold mb-4" devin-hidden="true">Recent Activity</h2>
+                    <div id="recentActivity" class="space-y-3" devin-hidden="true">
+                        <div class="flex items-center space-x-3 p-3 bg-gray-700 rounded" devin-hidden="true">
+                            <div class="w-2 h-2 bg-green-400 rounded-full" devin-hidden="true"></div>
+                            <span class="text-sm" devin-hidden="true">Emergency status deactivated for Daniel Bernardo (manual)</span>
+                            <span class="text-xs text-gray-400 ml-auto" devin-hidden="true">7/16/2025, 3:54:49 PM</span>
+                            <span class="bg-blue-500 text-xs px-2 py-1 rounded" devin-hidden="true">INFO</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-gray-700 rounded" devin-hidden="true">
+                            <div class="w-2 h-2 bg-red-400 rounded-full emergency-pulse" devin-hidden="true"></div>
+                            <span class="text-sm" devin-hidden="true">🚨 EMERGENCY STATUS ACTIVATED for Daniel Bernardo (manual)</span>
+                            <span class="text-xs text-gray-400 ml-auto" devin-hidden="true">7/16/2025, 3:54:49 PM</span>
+                            <span class="bg-red-500 text-xs px-2 py-1 rounded" devin-hidden="true">CRITICAL</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 bg-gray-700 rounded" devin-hidden="true">
+                            <div class="w-2 h-2 bg-blue-400 rounded-full" devin-hidden="true"></div>
+                            <span class="text-sm" devin-hidden="true">✅ Daniel Bernardo vitals updated - HR: 99 BPM, Stress: 1/10</span>
+                            <span class="text-xs text-gray-400 ml-auto" devin-hidden="true">7/16/2025, 3:54:46 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Officers Section -->
+            <div id="officers" class="section hidden" devin-hidden="true">
+                <div class="mb-6 flex justify-between items-center" devin-hidden="true">
+                    <div devin-hidden="true">
+                        <h1 class="text-3xl font-bold text-white mb-2" devin-hidden="true">Officer Management</h1>
+                        <p class="text-gray-400" devin-hidden="true">Manage officers and monitor their vital signs</p>
+                    </div>
+                    <button onclick="showAddOfficerModal()" class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg font-medium" devin-tagname="BUTTON" devin-hidden="true">+ Add Officer</button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="officersContainer" devin-hidden="true">
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between mb-4" devin-hidden="true">
+                            <div class="flex items-center space-x-3" devin-hidden="true">
+                                <div class="w-3 h-3 bg-green-400 rounded-full" devin-hidden="true"></div>
+                                <h3 class="text-lg font-bold" devin-hidden="true">Daniel Bernardo</h3>
+                            </div>
+                            <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-2" devin-hidden="true">Badge #0001</p>
+                        
+                        <div class="space-y-2 mb-4" devin-hidden="true">
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Status:</span>
+                                <span class="text-sm bg-green-500 px-2 py-1 rounded" devin-hidden="true">ON DUTY</span>
+                            </div>
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Operational:</span>
+                                <span class="text-sm bg-green-500 px-2 py-1 rounded" devin-hidden="true">Clear</span>
+                            </div>
+                            
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Wearable:</span>
+                                <span class="text-sm text-green-400" devin-hidden="true">Connected</span>
+                            </div>
+                            
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Heart Rate:</span>
+                                <span class="text-sm" id="heartRate" devin-hidden="true">84 BPM</span>
+                            </div>
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Stress Level:</span>
+                                <span class="text-sm" id="stressLevel" devin-hidden="true">4/10</span>
+                            </div>
+                            
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Unit:</span>
+                                <span class="text-sm" devin-hidden="true">Patrol Unit 1</span>
+                            </div>
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Section:</span>
+                                <span class="text-sm" devin-hidden="true">Downtown District</span>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2" devin-hidden="true">
+                            <button onclick="viewOfficerDetails(1)" class="flex-1 bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded text-sm" devin-tagname="BUTTON" devin-hidden="true">
+                                👤 Details
+                            </button>
+                            <button onclick="toggleOfficerStatus(1)" class="flex-1 bg-red-500 hover:bg-red-600 px-3 py-2 rounded text-sm" devin-tagname="BUTTON" devin-hidden="true">
+                                ⏸️ Off Duty
+                            </button>
+                            
+                            <button onclick="triggerEmergency()" class="flex-1 bg-red-500 hover:bg-red-600 px-3 py-2 rounded text-sm" devin-tagname="BUTTON" devin-hidden="true">
+                                🚨 Emergency
+                            </button>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div id="map" class="section hidden" devin-hidden="true">
+                <div class="mb-6" devin-hidden="true">
+                    <h1 class="text-3xl font-bold text-white mb-2" devin-hidden="true">Officer Locations</h1>
+                    <p class="text-gray-400" devin-hidden="true">Real-time officer location tracking</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" devin-hidden="true">
+                    <div class="lg:col-span-2" devin-hidden="true">
+                        <div class="bg-gray-800 p-4 rounded-lg" devin-hidden="true">
+                            <h3 class="text-lg font-bold mb-2" devin-hidden="true">Live Map View</h3>
+                            <p class="text-sm text-gray-400 mb-4" devin-hidden="true">Officers are shown with their current status and last known location</p>
+                            <div id="mapContainer" class="h-96 rounded-lg leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;" devin-tagname="DIV" devin-hidden="true"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);" devin-hidden="true"><div class="leaflet-pane leaflet-tile-pane" devin-hidden="true"><div class="leaflet-layer " style="z-index: 1; opacity: 1;" devin-hidden="true"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);" devin-hidden="true"><img alt="" src="https://a.tile.openstreetmap.org/13/2411/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(91px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://b.tile.openstreetmap.org/13/2412/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(347px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://b.tile.openstreetmap.org/13/2411/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(91px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://c.tile.openstreetmap.org/13/2412/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(347px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://c.tile.openstreetmap.org/13/2410/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-165px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://c.tile.openstreetmap.org/13/2413/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(603px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://a.tile.openstreetmap.org/13/2410/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-165px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://a.tile.openstreetmap.org/13/2413/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(603px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"></div></div></div><div class="leaflet-pane leaflet-overlay-pane" devin-hidden="true"></div><div class="leaflet-pane leaflet-shadow-pane" devin-hidden="true"></div><div class="leaflet-pane leaflet-marker-pane" devin-hidden="true"><div class="leaflet-marker-icon officer-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(395px, 192px, 0px); z-index: 192;" devin-tagname="DIV" devin-hidden="true"><div style="background-color: #3b82f6; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" devin-hidden="true">DB</div></div></div><div class="leaflet-pane leaflet-tooltip-pane" devin-hidden="true"></div><div class="leaflet-pane leaflet-popup-pane" devin-hidden="true"></div><div class="leaflet-proxy leaflet-zoom-animated" devin-hidden="true" style="transform: translate3d(617520px, 788419px, 0px) scale(4096);"></div></div><div class="leaflet-control-container" devin-hidden="true"><div class="leaflet-top leaflet-left" devin-hidden="true"><div class="leaflet-control-zoom leaflet-bar leaflet-control" devin-hidden="true"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false" devin-tagname="A" devin-hidden="true"><span aria-hidden="true" devin-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false" devin-tagname="A" devin-hidden="true"><span aria-hidden="true" devin-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right" devin-hidden="true"></div><div class="leaflet-bottom leaflet-left" devin-hidden="true"></div><div class="leaflet-bottom leaflet-right" devin-hidden="true"><div class="leaflet-control-attribution leaflet-control" devin-hidden="true"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps" devin-tagname="A" devin-hidden="true"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag" devin-hidden="true"><path fill="#4C7BE1" d="M0 0h12v4H0z" devin-hidden="true"></path><path fill="#FFD500" d="M0 4h12v3H0z" devin-hidden="true"></path><path fill="#E0BC00" d="M0 7h12v1H0z" devin-hidden="true"></path></svg> Leaflet</a> <span aria-hidden="true" devin-hidden="true">|</span> © OpenStreetMap contributors</div></div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-4 rounded-lg" devin-hidden="true">
+                        <h3 class="text-lg font-bold mb-2" devin-hidden="true">Officer Status</h3>
+                        <p class="text-sm text-gray-400 mb-4" devin-hidden="true">Click officer names for full-screen map</p>
+                        
+                        <div class="space-y-3" devin-hidden="true">
+                            <div class="p-3 bg-gray-700 rounded" devin-hidden="true">
+                                <div class="flex items-center justify-between mb-2" devin-hidden="true">
+                                    <div class="flex items-center space-x-2" devin-hidden="true">
+                                        <div class="w-3 h-3 bg-green-400 rounded-full" devin-hidden="true"></div>
+                                        <span class="font-medium" devin-hidden="true">Daniel Bernardo</span>
+                                    </div>
+                                    <span class="text-xs bg-green-500 px-2 py-1 rounded" devin-hidden="true">ON DUTY</span>
+                                </div>
+                                <p class="text-xs text-gray-400" devin-hidden="true">Badge #0001</p>
+                                <p class="text-xs text-gray-400" devin-hidden="true">Location: 40.7219, -73.9956</p>
+                                <p class="text-xs text-gray-400" devin-hidden="true">Last update: 7/16/2025, 3:54:45 PM</p>
+                                <button onclick="centerMapOnOfficer()" class="mt-2 w-full bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-xs" devin-tagname="BUTTON" devin-hidden="true">
+                                    Get Directions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Section -->
+            <div id="alerts" class="section hidden" devin-hidden="true">
+                <div class="mb-6" devin-hidden="true">
+                    <h1 class="text-3xl font-bold text-white mb-2" devin-hidden="true">Alert Center</h1>
+                    <p class="text-gray-400" devin-hidden="true">Monitor and manage officer safety alerts</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" devin-hidden="true">
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <p class="text-gray-400 text-sm" devin-hidden="true">Total Alerts</p>
+                                <p class="text-3xl font-bold text-white" id="totalAlerts" devin-hidden="true">0</p>
+                            </div>
+                            <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <p class="text-gray-400 text-sm" devin-hidden="true">Unacknowledged</p>
+                                <p class="text-3xl font-bold text-yellow-400" devin-hidden="true">0</p>
+                            </div>
+                            <svg class="w-8 h-8 text-yellow-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                        <div class="flex items-center justify-between" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <p class="text-gray-400 text-sm" devin-hidden="true">Critical</p>
+                                <p class="text-3xl font-bold text-red-400" devin-hidden="true">0</p>
+                            </div>
+                            <svg class="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" devin-hidden="true"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
+                    <h2 class="text-xl font-bold mb-4" devin-hidden="true">Officer Status &amp; Activity</h2>
+                    <div id="alertsList" class="space-y-3" devin-hidden="true">
+                    <div class="bg-gray-700 p-4 rounded" devin-hidden="true">
+                        <div class="flex justify-between items-start mb-2" devin-hidden="true">
+                            <div class="flex items-center space-x-3" devin-hidden="true">
+                                <div class="w-3 h-3 bg-green-400 rounded-full" devin-hidden="true"></div>
+                                <div devin-hidden="true">
+                                    <h4 class="font-bold" devin-hidden="true">Daniel Bernardo</h4>
+                                    <p class="text-xs text-gray-400" devin-hidden="true">Badge #0001 • Patrol Unit 1</p>
+                                </div>
+                            </div>
+                            <div class="text-right" devin-hidden="true">
+                                <span class="px-2 py-1 rounded text-xs bg-green-500" devin-hidden="true">ON DUTY</span>
+                                <span class="px-2 py-1 rounded text-xs bg-green-500 ml-1" devin-hidden="true">Clear</span>
+                            </div>
+                        </div>
+                        
+                            <p class="text-sm text-gray-400 mt-2" devin-hidden="true">Available for assignment</p>
+                        
+                        <div class="flex justify-between items-center mt-2" devin-hidden="true">
+                            <span class="text-xs text-gray-400" devin-hidden="true">Last Update: 7/16/2025, 5:46:21 PM</span>
+                            <button onclick="showOfficerProfileModal(1)" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded" devin-tagname="BUTTON" devin-hidden="true">View Profile</button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="bg-gray-800 p-6 rounded-lg mt-6" devin-hidden="true">
+                    <h2 class="text-xl font-bold mb-4" devin-hidden="true">Active 911 Calls</h2>
+                    <div id="activeCalls" class="space-y-3" devin-hidden="true">
+                    <div class="bg-gray-700 p-4 rounded" devin-hidden="true">
+                        <div class="flex justify-between items-start mb-2" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <h4 class="font-bold text-yellow-400" devin-hidden="true">MVA</h4>
+                                <p class="text-sm text-gray-400" devin-hidden="true">5th Ave &amp; Main St</p>
+                            </div>
+                            <div class="text-right" devin-hidden="true">
+                                <span class="px-2 py-1 rounded text-xs bg-yellow-500" devin-hidden="true">High</span>
+                                <span class="px-2 py-1 rounded text-xs bg-gray-500 ml-1" devin-hidden="true">Pending</span>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-3" devin-hidden="true">Multi-vehicle accident with injuries reported</p>
+                        <div class="flex justify-between items-center" devin-hidden="true">
+                            <div devin-hidden="true">
+                                
+                                    <span class="text-xs text-yellow-400" devin-hidden="true">Unassigned</span>
+                                
+                            </div>
+                            <span class="text-xs text-gray-400" devin-hidden="true">7/16/2025, 5:41:21 PM</span>
+                        </div>
+                    </div>
+                
+                    <div class="bg-gray-700 p-4 rounded" devin-hidden="true">
+                        <div class="flex justify-between items-start mb-2" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <h4 class="font-bold text-red-400" devin-hidden="true">Robbery in Progress</h4>
+                                <p class="text-sm text-gray-400" devin-hidden="true">456 Commerce Blvd</p>
+                            </div>
+                            <div class="text-right" devin-hidden="true">
+                                <span class="px-2 py-1 rounded text-xs bg-red-500" devin-hidden="true">Critical</span>
+                                <span class="px-2 py-1 rounded text-xs bg-gray-500 ml-1" devin-hidden="true">Pending</span>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-3" devin-hidden="true">Armed robbery at convenience store, suspect still on scene</p>
+                        <div class="flex justify-between items-center" devin-hidden="true">
+                            <div devin-hidden="true">
+                                
+                                    <span class="text-xs text-yellow-400" devin-hidden="true">Unassigned</span>
+                                
+                            </div>
+                            <span class="text-xs text-gray-400" devin-hidden="true">7/16/2025, 5:43:21 PM</span>
+                        </div>
+                    </div>
+                
+                    <div class="bg-gray-700 p-4 rounded" devin-hidden="true">
+                        <div class="flex justify-between items-start mb-2" devin-hidden="true">
+                            <div devin-hidden="true">
+                                <h4 class="font-bold text-blue-400" devin-hidden="true">Domestic Dispute</h4>
+                                <p class="text-sm text-gray-400" devin-hidden="true">789 Residential Dr</p>
+                            </div>
+                            <div class="text-right" devin-hidden="true">
+                                <span class="px-2 py-1 rounded text-xs bg-blue-500" devin-hidden="true">Medium</span>
+                                <span class="px-2 py-1 rounded text-xs bg-gray-500 ml-1" devin-hidden="true">Pending</span>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-3" devin-hidden="true">Noise complaint escalated to domestic disturbance</p>
+                        <div class="flex justify-between items-center" devin-hidden="true">
+                            <div devin-hidden="true">
+                                
+                                    <span class="text-xs text-yellow-400" devin-hidden="true">Unassigned</span>
+                                
+                            </div>
+                            <span class="text-xs text-gray-400" devin-hidden="true">7/16/2025, 5:44:21 PM</span>
+                        </div>
+                    </div>
+                
+                    <div class="bg-gray-700 p-4 rounded" devin-hidden="true">
+                        <div class="flex justify-between items-start mb-2" offscreen="" devin-hidden="true">
+                            <div offscreen="" devin-hidden="true">
+                                <h4 class="font-bold text-gray-400" offscreen="" devin-hidden="true">Suspicious Activity</h4>
+                                <p class="text-sm text-gray-400" offscreen="" devin-hidden="true">Central Park East</p>
+                            </div>
+                            <div class="text-right" offscreen="" devin-hidden="true">
+                                <span class="px-2 py-1 rounded text-xs bg-gray-500" offscreen="" devin-hidden="true">Low</span>
+                                <span class="px-2 py-1 rounded text-xs bg-gray-500 ml-1" offscreen="" devin-hidden="true">Pending</span>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-3" offscreen="" devin-hidden="true">Reports of suspicious individuals near playground</p>
+                        <div class="flex justify-between items-center" offscreen="" devin-hidden="true">
+                            <div offscreen="" devin-hidden="true">
+                                
+                                    <span class="text-xs text-yellow-400" offscreen="" devin-hidden="true">Unassigned</span>
+                                
+                            </div>
+                            <span class="text-xs text-gray-400" offscreen="" devin-hidden="true">7/16/2025, 5:45:21 PM</span>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Officer Profile Modal -->
+            <div id="officerProfileModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50" devin-hidden="true">
+                <div class="bg-gray-800 p-6 rounded-lg max-w-2xl w-full mx-4 max-h-screen overflow-y-auto" devin-hidden="true">
+                    <div class="flex justify-between items-center mb-4" devin-hidden="true">
+                        <h2 class="text-xl font-bold" devin-hidden="true">Officer Profile</h2>
+                        <button onclick="hideOfficerProfileModal()" class="text-gray-400 hover:text-white" devin-hidden="true">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" devin-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" devin-hidden="true"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="officerProfileContent" devin-hidden="true">
+                        <!-- Officer profile content will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Section -->
+            <div id="messages" class="section">
+                <div class="mb-6">
+                    <h1 class="text-3xl font-bold text-white mb-2">Emergency Communication</h1>
+                    <p class="text-gray-400">911 Dispatch ↔ Officer messaging system for emergency situations</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Dispatch Panel -->
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                            </svg>
+                            911 Dispatch Panel
+                        </h3>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Select Officer</label>
+                            <select id="officerSelect" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2" selectedindex="0" devinid="5" devin-tagname="SELECT">
+                                <option value="daniel" selected="true" index="0" offscreen="">Daniel Bernardo (Badge #0001)</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Quick Messages</label>
+                            <div class="space-y-2">
+                                <button onclick="sendQuickMessage('status_check')" class="w-full bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-left" devinid="6" devin-tagname="BUTTON">
+                                    🚨 Status Check - Are you okay?
+                                </button>
+                                <button onclick="sendQuickMessage('backup_needed')" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-left" devinid="7" devin-tagname="BUTTON">
+                                    🚔 Backup en route to your location
+                                </button>
+                                <button onclick="sendQuickMessage('medical_alert')" class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-left" devinid="8" devin-tagname="BUTTON">
+                                    🏥 Medical assistance dispatched
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Custom Message</label>
+                            <textarea id="customMessage" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 h-20" placeholder="Type custom message to officer..." devinid="9" devin-tagname="TEXTAREA"></textarea>
+                            <button onclick="sendCustomMessage()" class="mt-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded" devinid="10" devin-tagname="BUTTON">
+                                Send Custom Message
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Officer Response Panel -->
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <h3 class="text-lg font-bold mb-4 flex items-center">
+                            <svg class="w-5 h-5 mr-2 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                            </svg>
+                            Officer Response Panel
+                        </h3>
+
+                        <div id="officerMessages" class="mb-4 h-40 overflow-y-auto bg-gray-700 p-3 rounded">
+                            <p class="text-gray-400 text-sm text-center">No messages received</p>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Quick Responses</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button onclick="sendOfficerResponse('ok')" class="bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-sm" devinid="11" devin-tagname="BUTTON">
+                                    ✅ I'm OK
+                                </button>
+                                <button onclick="sendOfficerResponse('need_help')" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded text-sm" devinid="12" devin-tagname="BUTTON">
+                                    🆘 Need Help
+                                </button>
+                                <button onclick="sendOfficerResponse('backup')" class="bg-orange-600 hover:bg-orange-700 px-3 py-2 rounded text-sm" devinid="13" devin-tagname="BUTTON">
+                                    🚔 Need Backup
+                                </button>
+                                <button onclick="sendOfficerResponse('medical')" class="bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm" devinid="14" devin-tagname="BUTTON">
+                                    🏥 Medical Emergency
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Custom Response</label>
+                            <textarea id="officerCustomResponse" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2 h-16" placeholder="Type custom response..." devinid="15" devin-tagname="TEXTAREA"></textarea>
+                            <button onclick="sendOfficerCustomResponse()" class="mt-2 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded" devinid="16" devin-tagname="BUTTON">
+                                Send Response
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message History -->
+                <div class="mt-6 bg-gray-800 p-6 rounded-lg">
+                    <h3 class="text-lg font-bold mb-4">Message History</h3>
+                    <div id="messageHistory" class="space-y-3 max-h-60 overflow-y-auto">
+                        <p class="text-gray-400 text-center py-4">No message history</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Message Notification Toast -->
+    <div id="messageToast" class="fixed top-4 right-4 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg message-notification hidden" devin-hidden="true">
+        <div class="flex items-center space-x-2" devin-hidden="true">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" devin-hidden="true"></path>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" devin-hidden="true"></path>
+            </svg>
+            <span id="toastMessage" devin-hidden="true">New message received</span>
+        </div>
+    </div>
+
+    <!-- Add Officer Modal -->
+    <div id="addOfficerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50" devin-hidden="true">
+        <div class="bg-gray-800 p-6 rounded-lg w-full max-w-md mx-4" devin-hidden="true">
+            <div class="flex justify-between items-center mb-4" devin-hidden="true">
+                <h2 class="text-xl font-bold text-white" devin-hidden="true">Add New Officer</h2>
+                <button onclick="hideAddOfficerModal()" class="text-gray-400 hover:text-white" devin-hidden="true">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" devin-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" devin-hidden="true"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="addOfficerForm" class="space-y-4" devin-hidden="true">
+                <div class="grid grid-cols-2 gap-4" devin-hidden="true">
+                    <div devin-hidden="true">
+                        <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">First Name</label>
+                        <input type="text" id="firstName" required="" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
+                    </div>
+                    <div devin-hidden="true">
+                        <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Last Name</label>
+                        <input type="text" id="lastName" required="" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
+                    </div>
+                </div>
+                
+                <div devin-hidden="true">
+                    <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Badge Number</label>
+                    <input type="text" id="badgeNumber" required="" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4" devin-hidden="true">
+                    <div devin-hidden="true">
+                        <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Height</label>
+                        <input type="text" id="height" placeholder="e.g., 5'10&quot;" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
+                    </div>
+                    <div devin-hidden="true">
+                        <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Weight</label>
+                        <input type="text" id="weight" placeholder="e.g., 180 lbs" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
+                    </div>
+                </div>
+                
+                <div devin-hidden="true">
+                    <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Unit</label>
+                    <input type="text" id="unit" placeholder="e.g., Patrol Unit 12" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
+                </div>
+                
+                <div devin-hidden="true">
+                    <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Patrol Section</label>
+                    <input type="text" id="patrolSection" placeholder="e.g., Downtown District" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
+                </div>
+                
+                <div devin-hidden="true">
+                    <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Blood Type</label>
+                    <select id="bloodType" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true" selectedindex="0">
+                        <option value="" devin-hidden="true" selected="true" index="0">Select Blood Type</option>
+                        <option value="A+" devin-hidden="true" index="1">A+</option>
+                        <option value="A-" devin-hidden="true" index="2">A-</option>
+                        <option value="B+" devin-hidden="true" index="3">B+</option>
+                        <option value="B-" devin-hidden="true" index="4">B-</option>
+                        <option value="AB+" devin-hidden="true" index="5">AB+</option>
+                        <option value="AB-" devin-hidden="true" index="6">AB-</option>
+                        <option value="O+" devin-hidden="true" index="7">O+</option>
+                        <option value="O-" devin-hidden="true" index="8">O-</option>
+                    </select>
+                </div>
+                
+                <div devin-hidden="true">
+                    <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Allergies</label>
+                    <textarea id="allergies" rows="3" placeholder="List any known allergies..." class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none resize-none" devin-hidden="true"></textarea>
+                </div>
+                
+                <div class="flex space-x-3 pt-4" devin-hidden="true">
+                    <button type="button" onclick="hideAddOfficerModal()" class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded" devin-hidden="true">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded" devin-hidden="true">
+                        Add Officer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script devin-hidden="true">
+        let map;
+        let officerMarker;
+        let messageCount = 0;
+        let messages = [];
+        let isEmergencyActive = false;
+        let officers = [
+            {
+                id: 1,
+                firstName: 'Daniel',
+                lastName: 'Bernardo',
+                badgeNumber: '0001',
+                height: '5\'10"',
+                weight: '175 lbs',
+                unit: 'Patrol Unit 1',
+                patrolSection: 'Downtown District',
+                bloodType: 'O+',
+                allergies: 'None',
+                status: 'ON DUTY',
+                operationalStatus: 'Clear',
+                currentCall: null,
+                callHistory: [
+                    { id: 3, type: 'Domestic Dispute', location: '123 Oak St', completedAt: '7/16/2025, 2:30:00 PM', duration: '45 min' },
+                    { id: 1, type: 'MVA', location: '5th Ave & Main St', completedAt: '7/16/2025, 1:15:00 PM', duration: '30 min' }
+                ],
+                wearableConnected: true,
+                heartRate: 85,
+                stressLevel: 2,
+                location: { lat: 40.7219, lng: -73.9956 },
+                lastUpdate: new Date().toLocaleString()
+            }
+        ];
+
+        let calls = [
+            {
+                id: 1,
+                type: 'MVA',
+                location: '5th Ave & Main St',
+                priority: 'High',
+                description: 'Multi-vehicle accident with injuries reported',
+                assignedOfficer: null,
+                status: 'Pending',
+                timestamp: new Date(Date.now() - 300000).toLocaleString()
+            },
+            {
+                id: 2,
+                type: 'Robbery in Progress',
+                location: '456 Commerce Blvd',
+                priority: 'Critical',
+                description: 'Armed robbery at convenience store, suspect still on scene',
+                assignedOfficer: null,
+                status: 'Pending',
+                timestamp: new Date(Date.now() - 180000).toLocaleString()
+            },
+            {
+                id: 3,
+                type: 'Domestic Dispute',
+                location: '789 Residential Dr',
+                priority: 'Medium',
+                description: 'Noise complaint escalated to domestic disturbance',
+                assignedOfficer: null,
+                status: 'Pending',
+                timestamp: new Date(Date.now() - 120000).toLocaleString()
+            },
+            {
+                id: 4,
+                type: 'Suspicious Activity',
+                location: 'Central Park East',
+                priority: 'Low',
+                description: 'Reports of suspicious individuals near playground',
+                assignedOfficer: null,
+                status: 'Pending',
+                timestamp: new Date(Date.now() - 60000).toLocaleString()
+            }
+        ];
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('dashboard');
+            simulateVitals();
+            updateAlertsPage();
+            updateActiveCalls();
+            
+            // Enhanced form event listener attachment with retry mechanism
+            function attachFormListener() {
+                const form = document.getElementById('addOfficerForm');
+                console.log('Attempting to attach form listener, form found:', !!form);
+                
+                if (form) {
+                    // Remove any existing listeners first
+                    form.removeEventListener('submit', addOfficer);
+                    // Add the submit event listener
+                    form.addEventListener('submit', addOfficer);
+                    console.log('Submit event listener attached to form');
+                    
+                    // Also add click listener to submit button as backup
+                    const submitButton = form.querySelector('button[type="submit"]');
+                    if (submitButton) {
+                        submitButton.removeEventListener('click', handleSubmitClick);
+                        submitButton.addEventListener('click', handleSubmitClick);
+                        console.log('Click event listener attached to submit button');
+                    }
+                    return true;
+                } else {
+                    console.error('Add Officer form not found during initialization');
+                    return false;
+                }
+            }
+            
+            // Try to attach immediately
+            if (!attachFormListener()) {
+                // If form not found, try again after a short delay
+                setTimeout(attachFormListener, 100);
+            }
+        });
+        
+        // Handle submit button click as backup
+        function handleSubmitClick(event) {
+            console.log('Submit button clicked via click handler');
+            event.preventDefault();
+            addOfficer(event);
+        }
+
+        // Section navigation
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionName).classList.remove('hidden');
+            
+            // Update navigation buttons
+            document.querySelectorAll('nav button').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white');
+                btn.classList.add('hover:bg-gray-700', 'text-gray-300');
+            });
+            
+            // Only update button styles if event exists and has a target
+            if (typeof event !== 'undefined' && event && event.target) {
+                event.target.classList.add('bg-blue-600', 'text-white');
+                event.target.classList.remove('hover:bg-gray-700', 'text-gray-300');
+            }
+            
+            // Initialize map if map section is shown
+            if (sectionName === 'map' && !map) {
+                initializeMap();
+            }
+        }
+
+        // Initialize Leaflet map
+        function initializeMap() {
+            map = L.map('mapContainer').setView([40.7219, -73.9956], 13);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            // Add officer marker with initials
+            const officerIcon = L.divIcon({
+                className: 'officer-marker',
+                html: '<div style="background-color: #3b82f6; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">DB</div>',
+                iconSize: [40, 40],
+                iconAnchor: [20, 20]
+            });
+            
+            officerMarker = L.marker([40.7219, -73.9956], { icon: officerIcon })
+                .addTo(map)
+                .bindPopup('<b>Daniel Bernardo</b><br>Badge #0001<br>Status: ON DUTY')
+                .on('click', function() {
+                    showOfficerProfileModal(1);
+                });
+        }
+
+        // Center map on officer
+        function centerMapOnOfficer() {
+            if (map && officerMarker) {
+                map.setView(officerMarker.getLatLng(), 16);
+                officerMarker.openPopup();
+            }
+        }
+
+        // Simulate vital signs
+        function simulateVitals() {
+            setInterval(() => {
+                const heartRate = Math.floor(Math.random() * (100 - 70) + 70);
+                const stressLevel = Math.floor(Math.random() * 5) + 1;
+                
+                document.getElementById('heartRate').textContent = heartRate + ' BPM';
+                document.getElementById('stressLevel').textContent = stressLevel + '/10';
+                
+                // Trigger emergency alert if vitals are high
+                if (heartRate > 120 || stressLevel > 7) {
+                    if (!isEmergencyActive) {
+                        triggerAutomaticEmergency(heartRate, stressLevel);
+                    }
+                }
+            }, 5000);
+        }
+
+        // Trigger emergency manually
+        function triggerEmergency() {
+            isEmergencyActive = true;
+            updateActiveAlerts(1);
+            addRecentActivity('🚨 EMERGENCY STATUS ACTIVATED for Daniel Bernardo (manual)', 'CRITICAL');
+            
+            // Auto-send status check message
+            setTimeout(() => {
+                sendQuickMessage('status_check');
+            }, 2000);
+        }
+
+        // Trigger emergency automatically based on vitals
+        function triggerAutomaticEmergency(heartRate, stressLevel) {
+            isEmergencyActive = true;
+            updateActiveAlerts(1);
+            addRecentActivity(`🚨 EMERGENCY STATUS ACTIVATED for Daniel Bernardo (elevated vitals: HR ${heartRate}, Stress ${stressLevel})`, 'CRITICAL');
+            
+            // Auto-send status check message
+            setTimeout(() => {
+                sendQuickMessage('status_check');
+            }, 3000);
+        }
+
+        // IMPROVED: Clear emergency status with enhanced manual control
+        function clearEmergencyStatus() {
+            if (isEmergencyActive) {
+                isEmergencyActive = false;
+                updateActiveAlerts(0);
+                addRecentActivity('Emergency status deactivated for Daniel Bernardo (manual)', 'INFO');
+                
+                // Update UI elements to remove emergency styling
+                const emergencyElements = document.querySelectorAll('.emergency-pulse');
+                emergencyElements.forEach(element => {
+                    element.classList.remove('emergency-pulse');
+                });
+                
+                // Show confirmation message
+                alert('Emergency status has been cleared for Daniel Bernardo');
+            }
+        }
+
+        // View vitals
+        function viewVitals() {
+            alert('Vitals monitoring dashboard would open here');
+        }
+
+        // Update active alerts count
+        function updateActiveAlerts(count) {
+            document.getElementById('activeAlertsCount').textContent = count;
+            document.getElementById('totalAlerts').textContent = count;
+        }
+
+        // Add recent activity
+        function addRecentActivity(message, type = 'INFO') {
+            const activityContainer = document.getElementById('recentActivity');
+            const timestamp = new Date().toLocaleString();
+            
+            const colorClass = type === 'CRITICAL' ? 'bg-red-500' : type === 'INFO' ? 'bg-blue-500' : 'bg-gray-500';
+            const pulseClass = type === 'CRITICAL' ? 'emergency-pulse' : '';
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'flex items-center space-x-3 p-3 bg-gray-700 rounded';
+            activityItem.innerHTML = `
+                <div class="w-2 h-2 bg-red-400 rounded-full ${pulseClass}"></div>
+                <span class="text-sm">${message}</span>
+                <span class="text-xs text-gray-400 ml-auto">${timestamp}</span>
+                <span class="${colorClass} text-xs px-2 py-1 rounded">${type}</span>
+            `;
+            
+            activityContainer.insertBefore(activityItem, activityContainer.firstChild);
+        }
+
+        // Messaging System Functions
+        function sendQuickMessage(type) {
+            let message = '';
+            switch(type) {
+                case 'status_check':
+                    message = '🚨 Status Check - Are you okay? Please respond immediately.';
+                    break;
+                case 'backup_needed':
+                    message = '🚔 Backup units are en route to your location. ETA 3 minutes.';
+                    break;
+                case 'medical_alert':
+                    message = '🏥 Medical assistance has been dispatched to your location.';
+                    break;
+            }
+            
+            sendMessage('911 Dispatch', message, 'dispatch');
+        }
+
+        function sendCustomMessage() {
+            const message = document.getElementById('customMessage').value.trim();
+            if (message) {
+                sendMessage('911 Dispatch', message, 'dispatch');
+                document.getElementById('customMessage').value = '';
+            }
+        }
+
+        function sendOfficerResponse(type) {
+            let message = '';
+            switch(type) {
+                case 'ok':
+                    message = '✅ I\'m OK - Situation under control';
+                    isEmergencyActive = false;
+                    updateActiveAlerts(0);
+                    addRecentActivity('Emergency status deactivated for Daniel Bernardo (officer confirmed OK)', 'INFO');
+                    break;
+                case 'need_help':
+                    message = '🆘 I need immediate assistance';
+                    break;
+                case 'backup':
+                    message = '🚔 Requesting backup at my location';
+                    break;
+                case 'medical':
+                    message = '🏥 Medical emergency - need paramedics';
+                    break;
+            }
+            
+            sendMessage('Officer Daniel Bernardo', message, 'officer');
+        }
+
+        function sendOfficerCustomResponse() {
+            const message = document.getElementById('officerCustomResponse').value.trim();
+            if (message) {
+                sendMessage('Officer Daniel Bernardo', message, 'officer');
+                document.getElementById('officerCustomResponse').value = '';
+            }
+        }
+
+        function sendMessage(sender, message, type) {
+            const timestamp = new Date().toLocaleString();
+            const messageObj = {
+                sender: sender,
+                message: message,
+                timestamp: timestamp,
+                type: type
+            };
+            
+            messages.push(messageObj);
+            updateMessageDisplay();
+            updateMessageHistory();
+            showMessageToast(message);
+            updateMessageCount();
+        }
+
+        function updateMessageDisplay() {
+            const officerMessages = document.getElementById('officerMessages');
+            
+            // Show only dispatch messages to officer
+            const dispatchMessages = messages.filter(msg => msg.type === 'dispatch').slice(-3);
+            
+            if (dispatchMessages.length === 0) {
+                officerMessages.innerHTML = '<p class="text-gray-400 text-sm text-center">No messages received</p>';
+            } else {
+                officerMessages.innerHTML = dispatchMessages.map(msg => `
+                    <div class="mb-2 p-2 bg-gray-600 rounded">
+                        <div class="text-xs text-gray-300 mb-1">${msg.sender} - ${msg.timestamp}</div>
+                        <div class="text-sm">${msg.message}</div>
+                    </div>
+                `).join('');
+            }
+            
+            officerMessages.scrollTop = officerMessages.scrollHeight;
+        }
+
+        function updateMessageHistory() {
+            const messageHistory = document.getElementById('messageHistory');
+            
+            if (messages.length === 0) {
+                messageHistory.innerHTML = '<p class="text-gray-400 text-center py-4">No message history</p>';
+            } else {
+                messageHistory.innerHTML = messages.slice(-10).reverse().map(msg => {
+                    const bgColor = msg.type === 'dispatch' ? 'bg-blue-900' : 'bg-green-900';
+                    return `
+                        <div class="p-3 ${bgColor} rounded">
+                            <div class="flex justify-between items-start mb-1">
+                                <span class="font-medium text-sm">${msg.sender}</span>
+                                <span class="text-xs text-gray-400">${msg.timestamp}</span>
+                            </div>
+                            <div class="text-sm">${msg.message}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            messageHistory.scrollTop = messageHistory.scrollHeight;
+        }
+
+        function showMessageToast(message) {
+            const toast = document.getElementById('messageToast');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            toastMessage.textContent = message.length > 50 ? message.substring(0, 50) + '...' : message;
+            toast.classList.remove('hidden');
+            
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
+        function updateMessageCount() {
+            messageCount++;
+            const messageCountElement = document.getElementById('messageCount');
+            messageCountElement.textContent = messageCount;
+            messageCountElement.classList.remove('hidden');
+        }
+
+        // Reset message count when viewing messages
+        function resetMessageCount() {
+            messageCount = 0;
+            document.getElementById('messageCount').classList.add('hidden');
+        }
+
+        // Override showSection to reset message count for messages section
+        const originalShowSection = showSection;
+        showSection = function(sectionName) {
+            try {
+                if (sectionName === 'messages') {
+                    resetMessageCount();
+                }
+                if (sectionName === 'officers') {
+                    renderOfficers();
+                }
+                originalShowSection(sectionName);
+            } catch (error) {
+                console.error('Error in showSection override:', error);
+            }
+        };
+
+        // Officer Management Functions
+        function showAddOfficerModal() {
+            document.getElementById('addOfficerModal').classList.remove('hidden');
+        }
+
+        function hideAddOfficerModal() {
+            try {
+                const modal = document.getElementById('addOfficerModal');
+                const form = document.getElementById('addOfficerForm');
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+                if (form) {
+                    form.reset();
+                }
+            } catch (error) {
+                console.error('Error in hideAddOfficerModal:', error);
+            }
+        }
+
+        function addOfficer(event) {
+            event.preventDefault();
+            console.log('Add Officer function called');
+            
+            try {
+                const newOfficer = {
+                    id: officers.length + 1,
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    badgeNumber: document.getElementById('badgeNumber').value,
+                    height: document.getElementById('height').value || 'Not specified',
+                    weight: document.getElementById('weight').value || 'Not specified',
+                    unit: document.getElementById('unit').value || 'Not specified',
+                    patrolSection: document.getElementById('patrolSection').value || 'Not specified',
+                    bloodType: document.getElementById('bloodType').value || 'Not specified',
+                    allergies: document.getElementById('allergies').value || 'None',
+                    status: 'OFF DUTY',
+                    operationalStatus: 'Off Duty',
+                    currentCall: null,
+                    callHistory: [],
+                    wearableConnected: false,
+                    heartRate: 0,
+                    stressLevel: 0,
+                    location: { lat: 40.7219, lng: -73.9956 },
+                    lastUpdate: new Date().toLocaleString()
+                };
+                
+                officers.push(newOfficer);
+                console.log('Officer added to array:', newOfficer);
+                renderOfficers();
+                hideAddOfficerModal();
+                
+                addRecentActivity(`👮 New officer added: ${newOfficer.firstName} ${newOfficer.lastName} (Badge #${newOfficer.badgeNumber})`, 'INFO');
+                updateAlertsPage();
+            } catch (error) {
+                console.error('Error in addOfficer function:', error);
+            }
+        }
+
+        function renderOfficers() {
+            const officersContainer = document.getElementById('officersContainer');
+            
+            officersContainer.innerHTML = officers.map(officer => {
+                const statusColor = officer.status === 'ON DUTY' ? 'green' : 'gray';
+                const wearableStatus = officer.wearableConnected ? 'Connected' : 'Disconnected';
+                const wearableColor = officer.wearableConnected ? 'text-green-400' : 'text-red-400';
+                
+                return `
+                    <div class="bg-gray-800 p-6 rounded-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-${statusColor}-400 rounded-full"></div>
+                                <h3 class="text-lg font-bold officer-name">${officer.firstName} ${officer.lastName}</h3>
+                            </div>
+                            <svg class="w-5 h-5 text-${statusColor}-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-400 mb-2">Badge #${officer.badgeNumber}</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between">
+                                <span class="text-sm status-text">Status:</span>
+                                <span class="text-sm bg-${statusColor}-500 px-2 py-1 rounded status-text">${officer.status}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm status-text">Operational:</span>
+                                <span class="text-sm bg-${officer.operationalStatus === 'Clear' ? 'green' : officer.operationalStatus === 'En Route' ? 'yellow' : officer.operationalStatus === 'On Scene' ? 'red' : 'gray'}-500 px-2 py-1 rounded status-text">${officer.operationalStatus}</span>
+                            </div>
+                            ${officer.currentCall ? `
+                            <div class="flex justify-between">
+                                <span class="text-sm">Current Call:</span>
+                                <span class="text-sm text-blue-400">${calls.find(c => c.id === officer.currentCall)?.type || 'Unknown'}</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex justify-between">
+                                <span class="text-sm">Wearable:</span>
+                                <span class="text-sm ${wearableColor}">${wearableStatus}</span>
+                            </div>
+                            ${officer.wearableConnected ? `
+                            <div class="flex justify-between">
+                                <span class="text-sm">Heart Rate:</span>
+                                <span class="text-sm" ${officer.id === 1 ? 'id="heartRate"' : ''}>${officer.heartRate} BPM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm">Stress Level:</span>
+                                <span class="text-sm" ${officer.id === 1 ? 'id="stressLevel"' : ''}>${officer.stressLevel}/10</span>
+                            </div>
+                            ` : ''}
+                            <div class="flex justify-between">
+                                <span class="text-sm">Unit:</span>
+                                <span class="text-sm">${officer.unit}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm">Section:</span>
+                                <span class="text-sm">${officer.patrolSection}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2">
+                            <button onclick="viewOfficerDetails(${officer.id})" class="flex-1 bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded text-sm">
+                                👤 Details
+                            </button>
+                            <button onclick="toggleOfficerStatus(${officer.id})" class="flex-1 ${officer.status === 'ON DUTY' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} px-3 py-2 rounded text-sm">
+                                ${officer.status === 'ON DUTY' ? '⏸️ Off Duty' : '▶️ On Duty'}
+                            </button>
+                            ${officer.wearableConnected ? `
+                            <button onclick="triggerEmergency()" class="flex-1 bg-red-500 hover:bg-red-600 px-3 py-2 rounded text-sm">
+                                🚨 Emergency
+                            </button>
+                            <button onclick="clearEmergencyStatus()" class="flex-1 emergency-clear-btn text-sm">
+                                ✅ Clear Emergency
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleOfficerStatus(officerId) {
+            const officer = officers.find(o => o.id === officerId);
+            if (officer) {
+                const oldStatus = officer.status;
+                officer.status = officer.status === 'ON DUTY' ? 'OFF DUTY' : 'ON DUTY';
+                officer.lastUpdate = new Date().toLocaleString();
+                
+                // Update wearable connection and operational status based on duty status
+                if (officer.status === 'OFF DUTY') {
+                    officer.wearableConnected = false;
+                    officer.heartRate = 0;
+                    officer.stressLevel = 0;
+                    officer.operationalStatus = 'Off Duty';
+                    officer.currentCall = null;
+                } else {
+                    // When going on duty, reconnect wearable for officer with ID 1 (Daniel)
+                    if (officer.id === 1) {
+                        officer.wearableConnected = true;
+                        officer.heartRate = 85;
+                        officer.stressLevel = 2;
+                    }
+                    officer.operationalStatus = 'Clear';
+                }
+                
+                // Re-render officers to update the display
+                renderOfficers();
+                
+                // Update map marker if this is the main officer (Daniel)
+                if (officer.id === 1 && officerMarker) {
+                    const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
+                    const callInfo = currentCall ? `<br>Call: ${currentCall.type}` : '';
+                    officerMarker.setPopupContent(`<b>${officer.firstName} ${officer.lastName}</b><br>Badge #${officer.badgeNumber}<br>Status: ${officer.status}<br>Operational: ${officer.operationalStatus}${callInfo}`);
+                }
+                
+                // Log the status change
+                addRecentActivity(`👮 ${officer.firstName} ${officer.lastName} changed status: ${oldStatus} → ${officer.status}`, 'INFO');
+                updateAlertsPage();
+                
+                console.log(`Officer ${officer.firstName} ${officer.lastName} status changed from ${oldStatus} to ${officer.status}`);
+            }
+        }
+
+        function viewOfficerDetails(officerId) {
+            const officer = officers.find(o => o.id === officerId);
+            if (officer) {
+                alert(`Officer Details:
+Name: ${officer.firstName} ${officer.lastName}
+Badge: #${officer.badgeNumber}
+Height: ${officer.height}
+Weight: ${officer.weight}
+Blood Type: ${officer.bloodType}
+Allergies: ${officer.allergies}
+Unit: ${officer.unit}
+Patrol Section: ${officer.patrolSection}
+Status: ${officer.status}
+Operational Status: ${officer.operationalStatus}
+Current Call: ${officer.currentCall ? calls.find(c => c.id === officer.currentCall)?.type + ' at ' + calls.find(c => c.id === officer.currentCall)?.location : 'None'}
+Last Update: ${officer.lastUpdate}`);
+            }
+        }
+
+        function showOfficerProfileModal(officerId) {
+            const officer = officers.find(o => o.id === officerId);
+            if (!officer) return;
+
+            const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
+            const availableCalls = calls.filter(c => c.status === 'Pending' && !c.assignedOfficer);
+
+            const profileContent = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Personal Information</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Name:</span>
+                                <span>${officer.firstName} ${officer.lastName}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Badge:</span>
+                                <span>#${officer.badgeNumber}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Unit:</span>
+                                <span>${officer.unit}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Section:</span>
+                                <span>${officer.patrolSection}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Height:</span>
+                                <span>${officer.height}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Weight:</span>
+                                <span>${officer.weight}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Blood Type:</span>
+                                <span>${officer.bloodType}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Allergies:</span>
+                                <span>${officer.allergies}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Current Status</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Duty Status:</span>
+                                <span class="px-2 py-1 rounded text-sm ${officer.status === 'ON DUTY' ? 'bg-green-500' : 'bg-gray-500'}">${officer.status}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Operational Status:</span>
+                                <select onchange="updateOfficerOperationalStatus(${officer.id}, this.value)" class="bg-gray-700 text-white px-2 py-1 rounded text-sm">
+                                    <option value="Clear" ${officer.operationalStatus === 'Clear' ? 'selected' : ''}>Clear/Available</option>
+                                    <option value="En Route" ${officer.operationalStatus === 'En Route' ? 'selected' : ''}>En Route</option>
+                                    <option value="On Scene" ${officer.operationalStatus === 'On Scene' ? 'selected' : ''}>On Scene</option>
+                                    <option value="Unavailable" ${officer.operationalStatus === 'Unavailable' ? 'selected' : ''}>Unavailable</option>
+                                </select>
+                            </div>
+                            ${officer.wearableConnected ? `
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Heart Rate:</span>
+                                <span>${officer.heartRate} BPM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Stress Level:</span>
+                                <span>${officer.stressLevel}/10</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-lg font-bold mb-3">Current Assignment</h3>
+                    ${currentCall ? `
+                        <div class="bg-gray-700 p-4 rounded">
+                            <div class="flex justify-between items-start mb-2">
+                                <div>
+                                    <h4 class="font-bold text-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-400">${currentCall.type}</h4>
+                                    <p class="text-sm text-gray-400">${currentCall.location}</p>
+                                </div>
+                                <span class="px-2 py-1 rounded text-xs bg-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-500">${currentCall.priority}</span>
+                            </div>
+                            <p class="text-sm mb-3">${currentCall.description}</p>
+                            <button onclick="completeCall(${currentCall.id})" class="bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-sm">Complete Call</button>
+                        </div>
+                    ` : `
+                        <div class="bg-gray-700 p-4 rounded text-center">
+                            <p class="text-gray-400 mb-3">No current assignment</p>
+                            ${availableCalls.length > 0 && officer.status === 'ON DUTY' ? `
+                                <div class="space-y-2">
+                                    <p class="text-sm font-bold">Available Calls:</p>
+                                    ${availableCalls.map(call => `
+                                        <div class="flex justify-between items-center bg-gray-600 p-2 rounded">
+                                            <div class="text-left">
+                                                <span class="font-bold text-${call.priority === 'Critical' ? 'red' : call.priority === 'High' ? 'yellow' : 'blue'}-400">${call.type}</span>
+                                                <p class="text-xs text-gray-400">${call.location}</p>
+                                            </div>
+                                            <button onclick="assignOfficerToCall(${officer.id}, ${call.id})" class="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-xs">Assign</button>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `}
+                </div>
+
+                <div class="mt-6">
+                    <h3 class="text-lg font-bold mb-3">Call History</h3>
+                    <div class="space-y-2 max-h-32 overflow-y-auto">
+                        ${officer.callHistory.length > 0 ? officer.callHistory.map(call => `
+                            <div class="bg-gray-700 p-2 rounded text-sm">
+                                <div class="flex justify-between">
+                                    <span class="font-bold">${call.type}</span>
+                                    <span class="text-gray-400">${call.duration}</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-gray-400">
+                                    <span>${call.location}</span>
+                                    <span>${call.completedAt}</span>
+                                </div>
+                            </div>
+                        `).join('') : '<p class="text-gray-400 text-center">No call history</p>'}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('officerProfileContent').innerHTML = profileContent;
+            document.getElementById('officerProfileModal').classList.remove('hidden');
+        }
+
+        function hideOfficerProfileModal() {
+            document.getElementById('officerProfileModal').classList.add('hidden');
+        }
+
+        function updateOfficerOperationalStatus(officerId, newStatus) {
+            const officer = officers.find(o => o.id === officerId);
+            if (officer) {
+                const oldStatus = officer.operationalStatus;
+                officer.operationalStatus = newStatus;
+                officer.lastUpdate = new Date().toLocaleString();
+                
+                addRecentActivity(`👮 ${officer.firstName} ${officer.lastName} operational status: ${oldStatus} → ${newStatus}`, 'INFO');
+                updateAlertsPage();
+                
+                if (officer.id === 1 && officerMarker) {
+                    officerMarker.setPopupContent(`<b>${officer.firstName} ${officer.lastName}</b><br>Badge #${officer.badgeNumber}<br>Status: ${officer.status}<br>Operational: ${officer.operationalStatus}`);
+                }
+            }
+        }
+
+        function assignOfficerToCall(officerId, callId) {
+            const officer = officers.find(o => o.id === officerId);
+            const call = calls.find(c => c.id === callId);
+            
+            if (officer && call && officer.status === 'ON DUTY') {
+                officer.currentCall = callId;
+                officer.operationalStatus = 'En Route';
+                officer.lastUpdate = new Date().toLocaleString();
+                
+                call.assignedOfficer = officerId;
+                call.status = 'Assigned';
+                
+                addRecentActivity(`🚨 ${officer.firstName} ${officer.lastName} assigned to ${call.type} at ${call.location}`, 'INFO');
+                updateAlertsPage();
+                updateActiveCalls();
+                hideOfficerProfileModal();
+                
+                if (officer.id === 1 && officerMarker) {
+                    officerMarker.setPopupContent(`<b>${officer.firstName} ${officer.lastName}</b><br>Badge #${officer.badgeNumber}<br>Status: ${officer.status}<br>Operational: ${officer.operationalStatus}<br>Call: ${call.type}`);
+                }
+            }
+        }
+
+        function completeCall(callId) {
+            const call = calls.find(c => c.id === callId);
+            const officer = officers.find(o => o.currentCall === callId);
+            
+            if (call && officer) {
+                officer.callHistory.unshift({
+                    id: call.id,
+                    type: call.type,
+                    location: call.location,
+                    completedAt: new Date().toLocaleString(),
+                    duration: Math.floor(Math.random() * 60 + 15) + ' min'
+                });
+                
+                officer.currentCall = null;
+                officer.operationalStatus = 'Clear';
+                officer.lastUpdate = new Date().toLocaleString();
+                
+                call.status = 'Completed';
+                call.assignedOfficer = null;
+                
+                addRecentActivity(`✅ ${officer.firstName} ${officer.lastName} completed ${call.type} at ${call.location}`, 'INFO');
+                updateAlertsPage();
+                updateActiveCalls();
+                hideOfficerProfileModal();
+                
+                if (officer.id === 1 && officerMarker) {
+                    officerMarker.setPopupContent(`<b>${officer.firstName} ${officer.lastName}</b><br>Badge #${officer.badgeNumber}<br>Status: ${officer.status}<br>Operational: ${officer.operationalStatus}`);
+                }
+            }
+        }
+
+        function updateAlertsPage() {
+            const alertsList = document.getElementById('alertsList');
+            
+            const officerStatusUpdates = officers.map(officer => {
+                const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
+                const statusColor = officer.status === 'ON DUTY' ? 'green' : 'gray';
+                const operationalColor = officer.operationalStatus === 'Clear' ? 'green' : 
+                                       officer.operationalStatus === 'En Route' ? 'yellow' : 
+                                       officer.operationalStatus === 'On Scene' ? 'red' : 'gray';
+                
+                return `
+                    <div class="bg-gray-700 p-4 rounded">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-${statusColor}-400 rounded-full"></div>
+                                <div>
+                                    <h4 class="font-bold">${officer.firstName} ${officer.lastName}</h4>
+                                    <p class="text-xs text-gray-400">Badge #${officer.badgeNumber} • ${officer.unit}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-2 py-1 rounded text-xs bg-${statusColor}-500">${officer.status}</span>
+                                <span class="px-2 py-1 rounded text-xs bg-${operationalColor}-500 ml-1">${officer.operationalStatus}</span>
+                            </div>
+                        </div>
+                        ${currentCall ? `
+                            <div class="mt-2 p-2 bg-gray-600 rounded">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-bold text-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-400">${currentCall.type}</span>
+                                    <span class="text-xs text-gray-400">${currentCall.location}</span>
+                                </div>
+                            </div>
+                        ` : `
+                            <p class="text-sm text-gray-400 mt-2">Available for assignment</p>
+                        `}
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xs text-gray-400">Last Update: ${officer.lastUpdate}</span>
+                            <button onclick="showOfficerProfileModal(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">View Profile</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            alertsList.innerHTML = officerStatusUpdates || '<p class="text-gray-400 text-center py-4">No officer status updates</p>';
+        }
+
+        function updateActiveCalls() {
+            const activeCalls = document.getElementById('activeCalls');
+            
+            const pendingCalls = calls.filter(call => call.status === 'Pending' || call.status === 'Assigned');
+            
+            if (pendingCalls.length === 0) {
+                activeCalls.innerHTML = '<p class="text-gray-400 text-center py-4">No active 911 calls</p>';
+                return;
+            }
+            
+            const callsHtml = pendingCalls.map(call => {
+                const assignedOfficer = call.assignedOfficer ? officers.find(o => o.id === call.assignedOfficer) : null;
+                const priorityColor = call.priority === 'Critical' ? 'red' : call.priority === 'High' ? 'yellow' : call.priority === 'Medium' ? 'blue' : 'gray';
+                
+                return `
+                    <div class="bg-gray-700 p-4 rounded">
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <h4 class="font-bold text-${priorityColor}-400">${call.type}</h4>
+                                <p class="text-sm text-gray-400">${call.location}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="px-2 py-1 rounded text-xs bg-${priorityColor}-500">${call.priority}</span>
+                                <span class="px-2 py-1 rounded text-xs ${call.status === 'Assigned' ? 'bg-blue-500' : 'bg-gray-500'} ml-1">${call.status}</span>
+                            </div>
+                        </div>
+                        <p class="text-sm mb-3">${call.description}</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                ${assignedOfficer ? `
+                                    <span class="text-xs text-green-400">Assigned to: ${assignedOfficer.firstName} ${assignedOfficer.lastName}</span>
+                                ` : `
+                                    <span class="text-xs text-yellow-400">Unassigned</span>
+                                `}
+                            </div>
+                            <span class="text-xs text-gray-400">${call.timestamp}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            activeCalls.innerHTML = callsHtml;
+        }
+    </script>
+
+
+</body></html>
