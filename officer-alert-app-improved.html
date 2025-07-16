@@ -860,6 +860,9 @@
             // Initialize map if map section is shown
             if (sectionName === 'map' && !map) {
                 initializeMap();
+                renderOfficerStatusSidebar();
+            } else if (sectionName === 'map') {
+                renderOfficerStatusSidebar();
             }
         }
 
@@ -921,8 +924,16 @@
             officerMarkers.set(officer.id, marker);
         }
 
-        function centerMapOnOfficer() {
-            if (map && officerMarkers.size > 0) {
+        function centerMapOnOfficer(officerId = null) {
+            if (!map) return;
+            
+            if (officerId) {
+                const marker = officerMarkers.get(officerId);
+                if (marker) {
+                    map.setView(marker.getLatLng(), 16);
+                    marker.openPopup();
+                }
+            } else if (officerMarkers.size > 0) {
                 const firstMarker = officerMarkers.values().next().value;
                 map.setView(firstMarker.getLatLng(), 16);
                 firstMarker.openPopup();
@@ -991,6 +1002,7 @@
                 
                 renderOfficers();
                 updateMapMarkers();
+                renderOfficerStatusSidebar();
                 
                 alert('Emergency status has been cleared for Daniel Bernardo');
             }
@@ -1188,6 +1200,19 @@
             }
         };
 
+        // Generate random location around NYC area
+        function generateOfficerLocation() {
+            const baseLatitude = 40.7219;
+            const baseLongitude = -73.9956;
+            const latVariation = (Math.random() - 0.5) * 0.02; // ±0.01 degrees (~1km)
+            const lngVariation = (Math.random() - 0.5) * 0.02; // ±0.01 degrees (~1km)
+            
+            return {
+                lat: baseLatitude + latVariation,
+                lng: baseLongitude + lngVariation
+            };
+        }
+
         // Officer Management Functions
         function showAddOfficerModal() {
             document.getElementById('addOfficerModal').classList.remove('hidden');
@@ -1224,14 +1249,14 @@
                     patrolSection: document.getElementById('patrolSection').value || 'Not specified',
                     bloodType: document.getElementById('bloodType').value || 'Not specified',
                     allergies: document.getElementById('allergies').value || 'None',
-                    status: 'OFF DUTY',
-                    operationalStatus: 'Off Duty',
+                    status: 'ON DUTY',
+                    operationalStatus: 'Clear',
                     currentCall: null,
                     callHistory: [],
                     wearableConnected: false,
                     heartRate: 0,
                     stressLevel: 0,
-                    location: { lat: 40.7219, lng: -73.9956 },
+                    location: generateOfficerLocation(),
                     lastUpdate: new Date().toLocaleString()
                 };
                 
@@ -1239,6 +1264,7 @@
                 console.log('Officer added to array:', newOfficer);
                 renderOfficers();
                 updateMapMarkers();
+                renderOfficerStatusSidebar();
                 hideAddOfficerModal();
                 
                 addRecentActivity(`👮 New officer added: ${newOfficer.firstName} ${newOfficer.lastName} (Badge #${newOfficer.badgeNumber})`, 'INFO');
@@ -1246,6 +1272,41 @@
             } catch (error) {
                 console.error('Error in addOfficer function:', error);
             }
+        }
+
+        function renderOfficerStatusSidebar() {
+            const sidebarContainer = document.querySelector('#map .space-y-3');
+            if (!sidebarContainer) return;
+            
+            const onDutyOfficers = officers.filter(officer => officer.status === 'ON DUTY');
+            
+            if (onDutyOfficers.length === 0) {
+                sidebarContainer.innerHTML = '<p class="text-gray-400 text-center py-4">No officers on duty</p>';
+                return;
+            }
+            
+            sidebarContainer.innerHTML = onDutyOfficers.map(officer => {
+                const isEmergency = isEmergencyActive || officer.heartRate > 120 || officer.stressLevel > 7;
+                const statusColor = isEmergency ? 'red' : 'green';
+                
+                return `
+                    <div class="p-3 bg-gray-700 rounded">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-3 h-3 bg-${statusColor}-400 rounded-full"></div>
+                                <span class="font-medium">${officer.firstName} ${officer.lastName}</span>
+                            </div>
+                            <span class="text-xs bg-${statusColor}-500 px-2 py-1 rounded">ON DUTY</span>
+                        </div>
+                        <p class="text-xs text-gray-400">Badge #${officer.badgeNumber}</p>
+                        <p class="text-xs text-gray-400">Location: ${officer.location.lat.toFixed(4)}, ${officer.location.lng.toFixed(4)}</p>
+                        <p class="text-xs text-gray-400">Last update: ${officer.lastUpdate}</p>
+                        <button onclick="centerMapOnOfficer(${officer.id})" class="mt-2 w-full bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-xs">
+                            Get Directions
+                        </button>
+                    </div>
+                `;
+            }).join('');
         }
 
         function renderOfficers() {
@@ -1357,6 +1418,7 @@
                 
                 renderOfficers();
                 updateMapMarkers();
+                renderOfficerStatusSidebar();
                 
                 // Log the status change
                 addRecentActivity(`👮 ${officer.firstName} ${officer.lastName} changed status: ${oldStatus} → ${officer.status}`, 'INFO');
@@ -1542,6 +1604,7 @@ Last Update: ${officer.lastUpdate}`);
                 updateAlertsPage();
                 renderOfficers();
                 updateMapMarkers();
+                renderOfficerStatusSidebar();
             }
         }
 
@@ -1563,6 +1626,7 @@ Last Update: ${officer.lastUpdate}`);
                 hideOfficerProfileModal();
                 renderOfficers();
                 updateMapMarkers();
+                renderOfficerStatusSidebar();
             }
         }
 
@@ -1592,6 +1656,7 @@ Last Update: ${officer.lastUpdate}`);
                 hideOfficerProfileModal();
                 renderOfficers();
                 updateMapMarkers();
+                renderOfficerStatusSidebar();
             }
         }
 
