@@ -2060,11 +2060,9 @@
                                 ${currentCall.type}
                             </div>
                         ` : ''}
-                        ${officer.wearableConnected ? `
-                            <div class="text-xs text-gray-400">
-                                ${officer.heartRate} BPM | ${officer.skinTemperature || '98.6'}°F
-                            </div>
-                        ` : ''}
+                        <div class="text-xs text-gray-400">
+                            ${officer.heartRate} BPM | ${officer.skinTemperature || '98.6'}°F
+                        </div>
                         <div class="flex justify-between items-center mt-2">
                             <span class="text-xs bg-${statusColor}-500 px-2 py-1 rounded">${officer.operationalStatus}</span>
                             <button onclick="event.stopPropagation(); centerMapOnOfficer(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">
@@ -2122,7 +2120,6 @@
                                 <span class="text-sm">Wearable:</span>
                                 <span class="text-sm ${wearableColor}">${wearableStatus}</span>
                             </div>
-                            ${officer.wearableConnected ? `
                             <div class="flex justify-between">
                                 <span class="text-sm">Heart Rate:</span>
                                 <span class="text-sm" ${officer.id === 1 ? 'id="heartRate"' : ''}>${officer.heartRate} BPM</span>
@@ -2139,7 +2136,6 @@
                                 <span class="text-sm">Stress Level:</span>
                                 <span class="text-sm" ${officer.id === 1 ? 'id="stressLevel"' : ''}>${officer.stressLevel}/10</span>
                             </div>
-                            ` : ''}
                             <div class="flex justify-between">
                                 <span class="text-sm">Unit:</span>
                                 <span class="text-sm">${officer.unit}</span>
@@ -2275,16 +2271,22 @@ Last Update: ${officer.lastUpdate}`);
                                 <span class="text-gray-400">Operational Status:</span>
                                 <span class="px-2 py-1 rounded text-sm bg-blue-500">${officer.operationalStatus}</span>
                             </div>
-                            ${officer.wearableConnected ? `
                             <div class="flex justify-between">
                                 <span class="text-gray-400">Heart Rate:</span>
                                 <span>${officer.heartRate} BPM</span>
                             </div>
                             <div class="flex justify-between">
+                                <span class="text-gray-400">Blood Pressure:</span>
+                                <span>${officer.bloodPressure || '120/80'} mmHg</span>
+                            </div>
+                            <div class="flex justify-between">
                                 <span class="text-gray-400">Skin Temperature:</span>
                                 <span>${officer.skinTemperature || '98.6'}°F</span>
                             </div>
-                            ` : ''}
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Stress Level:</span>
+                                <span>${officer.stressLevel}/10</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2354,9 +2356,6 @@ Last Update: ${officer.lastUpdate}`);
                                     <option value="En Route" ${officer.operationalStatus === 'En Route' ? 'selected' : ''}>En Route</option>
                                     <option value="On Scene" ${officer.operationalStatus === 'On Scene' ? 'selected' : ''}>On Scene</option>
                                     <option value="Unavailable" ${officer.operationalStatus === 'Unavailable' ? 'selected' : ''}>Unavailable</option>
-                                </select>
-                            </div>
-                            ${officer.wearableConnected ? `
                             <div class="flex justify-between">
                                 <span class="text-gray-400">Heart Rate:</span>
                                 <span>${officer.heartRate} BPM</span>
@@ -2373,7 +2372,6 @@ Last Update: ${officer.lastUpdate}`);
                                 <span class="text-gray-400">Stress Level:</span>
                                 <span>${officer.stressLevel}/10</span>
                             </div>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
