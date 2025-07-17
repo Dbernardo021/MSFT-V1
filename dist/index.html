@@ -451,7 +451,13 @@
                         <div class="bg-gray-800 p-4 rounded-lg" devin-hidden="true">
                             <h3 class="text-lg font-bold mb-2" devin-hidden="true">Live Map View</h3>
                             <p class="text-sm text-gray-400 mb-4" devin-hidden="true">Officers are shown with their current status and last known location</p>
-                            <div id="mapContainer" class="h-96 rounded-lg leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" tabindex="0" style="position: relative;" devin-tagname="DIV" devin-hidden="true"><div class="leaflet-pane leaflet-map-pane" style="transform: translate3d(0px, 0px, 0px);" devin-hidden="true"><div class="leaflet-pane leaflet-tile-pane" devin-hidden="true"><div class="leaflet-layer " style="z-index: 1; opacity: 1;" devin-hidden="true"><div class="leaflet-tile-container leaflet-zoom-animated" style="z-index: 18; transform: translate3d(0px, 0px, 0px) scale(1);" devin-hidden="true"><img alt="" src="https://a.tile.openstreetmap.org/13/2411/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(91px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://b.tile.openstreetmap.org/13/2412/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(347px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://b.tile.openstreetmap.org/13/2411/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(91px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://c.tile.openstreetmap.org/13/2412/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(347px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://c.tile.openstreetmap.org/13/2410/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-165px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://c.tile.openstreetmap.org/13/2413/3079.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(603px, -3px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://a.tile.openstreetmap.org/13/2410/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(-165px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"><img alt="" src="https://a.tile.openstreetmap.org/13/2413/3080.png" class="leaflet-tile leaflet-tile-loaded" style="width: 256px; height: 256px; transform: translate3d(603px, 253px, 0px); opacity: 1;" devin-tagname="IMG" devin-hidden="true"></div></div></div><div class="leaflet-pane leaflet-overlay-pane" devin-hidden="true"></div><div class="leaflet-pane leaflet-shadow-pane" devin-hidden="true"></div><div class="leaflet-pane leaflet-marker-pane" devin-hidden="true"><div class="leaflet-marker-icon officer-marker leaflet-zoom-animated leaflet-interactive" tabindex="0" role="button" style="margin-left: -20px; margin-top: -20px; width: 40px; height: 40px; transform: translate3d(395px, 192px, 0px); z-index: 192;" devin-tagname="DIV" devin-hidden="true"><div style="background-color: #3b82f6; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);" devin-hidden="true">DB</div></div></div><div class="leaflet-pane leaflet-tooltip-pane" devin-hidden="true"></div><div class="leaflet-pane leaflet-popup-pane" devin-hidden="true"></div><div class="leaflet-proxy leaflet-zoom-animated" devin-hidden="true" style="transform: translate3d(617520px, 788419px, 0px) scale(4096);"></div></div><div class="leaflet-control-container" devin-hidden="true"><div class="leaflet-top leaflet-left" devin-hidden="true"><div class="leaflet-control-zoom leaflet-bar leaflet-control" devin-hidden="true"><a class="leaflet-control-zoom-in" href="#" title="Zoom in" role="button" aria-label="Zoom in" aria-disabled="false" devin-tagname="A" devin-hidden="true"><span aria-hidden="true" devin-hidden="true">+</span></a><a class="leaflet-control-zoom-out" href="#" title="Zoom out" role="button" aria-label="Zoom out" aria-disabled="false" devin-tagname="A" devin-hidden="true"><span aria-hidden="true" devin-hidden="true">−</span></a></div></div><div class="leaflet-top leaflet-right" devin-hidden="true"></div><div class="leaflet-bottom leaflet-left" devin-hidden="true"></div><div class="leaflet-bottom leaflet-right" devin-hidden="true"><div class="leaflet-control-attribution leaflet-control" devin-hidden="true"><a href="https://leafletjs.com" title="A JavaScript library for interactive maps" devin-tagname="A" devin-hidden="true"><svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="12" height="8" viewBox="0 0 12 8" class="leaflet-attribution-flag" devin-hidden="true"><path fill="#4C7BE1" d="M0 0h12v4H0z" devin-hidden="true"></path><path fill="#FFD500" d="M0 4h12v3H0z" devin-hidden="true"></path><path fill="#E0BC00" d="M0 7h12v1H0z" devin-hidden="true"></path></svg> Leaflet</a> <span aria-hidden="true" devin-hidden="true">|</span> © OpenStreetMap contributors</div></div></div></div>
+                            <div id="mapContainer" style="height: 400px; border-radius: 8px;"></div>
+                            
+                            <!-- Officer Profile Expansion Below Map -->
+                            <div id="mapProfileExpansion" class="map-profile-expansion">
+                                <button class="map-profile-close" onclick="hideMapProfile()">×</button>
+                                <div id="mapProfileContent"></div>
+                            </div>
                         </div>
                     </div>
 
@@ -1560,7 +1566,7 @@
                 .addTo(map)
                 .bindPopup(`<b>${officer.firstName} ${officer.lastName}</b><br>Badge #${officer.badgeNumber}<br>Status: ${officer.status}<br>Operational: ${officer.operationalStatus}${callInfo}`)
                 .on('click', function() {
-                    showOfficerProfileModal(officer.id);
+                    showMapProfile(officer.id);
                 });
             
             officerMarkers.set(officer.id, marker);
@@ -2138,6 +2144,77 @@ Status: ${officer.status}
 Operational Status: ${officer.operationalStatus}
 Current Call: ${officer.currentCall ? calls.find(c => c.id === officer.currentCall)?.type + ' at ' + calls.find(c => c.id === officer.currentCall)?.location : 'None'}
 Last Update: ${officer.lastUpdate}`);
+            }
+        }
+
+        function showMapProfile(officerId) {
+            const officer = officers.find(o => o.id === officerId);
+            if (!officer) return;
+
+            const expansion = document.getElementById('mapProfileExpansion');
+            const content = document.getElementById('mapProfileContent');
+            
+            if (!expansion || !content) return;
+
+            const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
+
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Personal Information</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Name:</span>
+                                <span>${officer.firstName} ${officer.lastName}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Badge:</span>
+                                <span>#${officer.badgeNumber}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Unit:</span>
+                                <span>${officer.unit}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Section:</span>
+                                <span>${officer.patrolSection}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Current Status</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Duty Status:</span>
+                                <span class="px-2 py-1 rounded text-sm ${officer.status === 'ON DUTY' ? 'bg-green-500' : 'bg-gray-500'}">${officer.status}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Operational Status:</span>
+                                <span class="px-2 py-1 rounded text-sm bg-blue-500">${officer.operationalStatus}</span>
+                            </div>
+                            ${officer.wearableConnected ? `
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Heart Rate:</span>
+                                <span>${officer.heartRate} BPM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Skin Temperature:</span>
+                                <span>${officer.skinTemperature || '98.6'}°F</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            expansion.style.display = 'block';
+        }
+
+        function hideMapProfile() {
+            const expansion = document.getElementById('mapProfileExpansion');
+            if (expansion) {
+                expansion.style.display = 'none';
             }
         }
 
