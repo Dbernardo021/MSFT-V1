@@ -2051,7 +2051,7 @@
                         </div>
                         ${currentCall ? `
                             <div class="text-xs text-blue-400 mb-1">
-                                📞 ${currentCall.type}
+                                ${currentCall.type}
                             </div>
                         ` : ''}
                         ${officer.wearableConnected ? `
@@ -2062,7 +2062,7 @@
                         <div class="flex justify-between items-center mt-2">
                             <span class="text-xs bg-${statusColor}-500 px-2 py-1 rounded">${officer.operationalStatus}</span>
                             <button onclick="event.stopPropagation(); centerMapOnOfficer(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">
-                                📍 Locate
+                                Locate
                             </button>
                         </div>
                     </div>
