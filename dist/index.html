@@ -356,7 +356,7 @@
                         <div class="flex items-center justify-between" devin-hidden="true">
                             <div devin-hidden="true">
                                 <p class="text-gray-400 text-sm" devin-hidden="true">On Duty</p>
-                                <p class="text-3xl font-bold text-green-400" devin-hidden="true">1</p>
+                                <p class="text-3xl font-bold text-green-400" data-stat="on-duty" devin-hidden="true">1</p>
                             </div>
                             <svg class="w-8 h-8 text-green-400" fill="currentColor" viewBox="0 0 20 20" devin-hidden="true">
                                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" devin-hidden="true"></path>
@@ -1513,6 +1513,17 @@
             expansion.classList.remove('expanded');
         }
 
+        // Update dashboard counts with real-time officer statistics
+        function updateDashboardCounts() {
+            const onDutyCount = officers.filter(o => o.status === 'ON DUTY').length;
+            const totalCount = officers.length;
+            
+            const onDutyElement = document.querySelector('[data-stat="on-duty"]');
+            if (onDutyElement) {
+                onDutyElement.textContent = onDutyCount;
+            }
+        }
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme');
@@ -1525,6 +1536,7 @@
             simulateVitals();
             updateAlertsPage();
             updateActiveCalls();
+            updateDashboardCounts();
             
             // Enhanced form event listener attachment with retry mechanism
             function attachFormListener() {
@@ -1694,6 +1706,9 @@
                     document.getElementById('skinTemperature').textContent = skinTemperature + '°F';
                 }
                 document.getElementById('stressLevel').textContent = stressLevel + '/10';
+                
+                // Update dashboard counts
+                updateDashboardCounts();
                 
                 // Trigger emergency alert if vitals are high
                 if (heartRate > 120 || stressLevel > 7) {
@@ -2196,6 +2211,7 @@
                 renderOfficers();
                 updateMapMarkers();
                 renderOfficerStatusSidebar();
+                updateDashboardCounts();
                 
                 // Log the status change
             addRecentActivity(`${officer.firstName} ${officer.lastName} changed status: ${oldStatus} → ${officer.status}`, 'INFO');
