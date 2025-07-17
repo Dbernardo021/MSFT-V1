@@ -141,17 +141,26 @@
         
         /* Dark mode toggle button */
         .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 12px 16px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         
         .theme-toggle:hover {
             background: var(--bg-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
         
         /* Standardized officer button grid */
@@ -279,9 +288,6 @@
                         <h1 class="text-xl font-bold text-blue-400">ONA TECHNOLOGIES</h1>
                         <p class="text-sm text-gray-400">TACTICAL OPERATIONS CENTER</p>
                     </div>
-                    <button onclick="toggleTheme()" class="theme-toggle">
-                        <span id="themeIcon">🌙</span>
-                    </button>
                 </div>
             </div>
             
@@ -2619,5 +2625,10 @@ Last Update: ${officer.lastUpdate}`);
         }
     </script>
 
+
+    <!-- Dark Mode Toggle Button -->
+    <button onclick="toggleTheme()" class="theme-toggle">
+        <span id="themeIcon">🌙</span> Dark Mode
+    </button>
 
 </body></html>
