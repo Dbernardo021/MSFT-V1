@@ -2222,6 +2222,71 @@ Last Update: ${officer.lastUpdate}`);
             }
         }
 
+        function showMapProfile(officerId) {
+            const officer = officers.find(o => o.id === officerId);
+            if (!officer) return;
+
+            const expansion = document.getElementById('mapProfileExpansion');
+            const content = document.getElementById('mapProfileContent');
+            
+            if (!expansion || !content) return;
+
+            const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
+            const availableCalls = calls.filter(c => c.status === 'Pending' && !c.assignedOfficer);
+
+            content.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Personal Information</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Name:</span>
+                                <span>${officer.firstName} ${officer.lastName}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Badge:</span>
+                                <span>#${officer.badgeNumber}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Unit:</span>
+                                <span>${officer.unit}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Section:</span>
+                                <span>${officer.patrolSection}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold mb-3">Current Status</h3>
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Duty Status:</span>
+                                <span class="px-2 py-1 rounded text-sm ${officer.status === 'ON DUTY' ? 'bg-green-500' : 'bg-gray-500'}">${officer.status}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-400">Operational Status:</span>
+                                <span class="px-2 py-1 rounded text-sm bg-blue-500">${officer.operationalStatus}</span>
+                            </div>
+                            ${officer.wearableConnected ? `
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Heart Rate:</span>
+                                <span>${officer.heartRate} BPM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Skin Temperature:</span>
+                                <span>${officer.skinTemperature || '98.6'}°F</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            expansion.style.display = 'block';
+        }
+
         function showOfficerProfileModal(officerId) {
             const officer = officers.find(o => o.id === officerId);
             if (!officer) return;
