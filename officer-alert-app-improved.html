@@ -2356,6 +2356,8 @@ Last Update: ${officer.lastUpdate}`);
                                     <option value="En Route" ${officer.operationalStatus === 'En Route' ? 'selected' : ''}>En Route</option>
                                     <option value="On Scene" ${officer.operationalStatus === 'On Scene' ? 'selected' : ''}>On Scene</option>
                                     <option value="Unavailable" ${officer.operationalStatus === 'Unavailable' ? 'selected' : ''}>Unavailable</option>
+                                </select>
+                            </div>
                             <div class="flex justify-between">
                                 <span class="text-gray-400">Heart Rate:</span>
                                 <span>${officer.heartRate} BPM</span>
