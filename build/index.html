@@ -22,7 +22,16 @@
         }
         
         .status-text {
-            color: #374151 !important;
+            color: white !important;
+        }
+        
+        /* Enhanced contrast for all text elements */
+        .text-contrast {
+            color: white !important;
+        }
+        
+        .bg-contrast {
+            background-color: #1f2937 !important;
         }
         
         /* IMPROVED: Enhanced emergency clear button styling - consistent with other buttons */
@@ -263,6 +272,14 @@
                                 <span class="text-sm" id="heartRate" devin-hidden="true">84 BPM</span>
                             </div>
                             <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Blood Pressure:</span>
+                                <span class="text-sm" id="bloodPressure" devin-hidden="true">120/80 mmHg</span>
+                            </div>
+                            <div class="flex justify-between" devin-hidden="true">
+                                <span class="text-sm" devin-hidden="true">Skin Temp:</span>
+                                <span class="text-sm" id="skinTemperature" devin-hidden="true">98.6°F</span>
+                            </div>
+                            <div class="flex justify-between" devin-hidden="true">
                                 <span class="text-sm" devin-hidden="true">Stress Level:</span>
                                 <span class="text-sm" id="stressLevel" devin-hidden="true">4/10</span>
                             </div>
@@ -301,8 +318,8 @@
                     <p class="text-gray-400" devin-hidden="true">Real-time officer location tracking</p>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6" devin-hidden="true">
-                    <div class="lg:col-span-2" devin-hidden="true">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6" devin-hidden="true">
+                    <div class="lg:col-span-3" devin-hidden="true">
                         <div class="bg-gray-800 p-4 rounded-lg" devin-hidden="true">
                             <h3 class="text-lg font-bold mb-2" devin-hidden="true">Live Map View</h3>
                             <p class="text-sm text-gray-400 mb-4" devin-hidden="true">Officers are shown with their current status and last known location</p>
@@ -311,25 +328,14 @@
                     </div>
 
                     <div class="bg-gray-800 p-4 rounded-lg" devin-hidden="true">
-                        <h3 class="text-lg font-bold mb-2" devin-hidden="true">Officer Status</h3>
-                        <p class="text-sm text-gray-400 mb-4" devin-hidden="true">Click officer names for full-screen map</p>
-                        
-                        <div class="space-y-3" devin-hidden="true">
-                            <div class="p-3 bg-gray-700 rounded" devin-hidden="true">
-                                <div class="flex items-center justify-between mb-2" devin-hidden="true">
-                                    <div class="flex items-center space-x-2" devin-hidden="true">
-                                        <div class="w-3 h-3 bg-green-400 rounded-full" devin-hidden="true"></div>
-                                        <span class="font-medium" devin-hidden="true">Daniel Bernardo</span>
-                                    </div>
-                                    <span class="text-xs bg-green-500 px-2 py-1 rounded" devin-hidden="true">ON DUTY</span>
-                                </div>
-                                <p class="text-xs text-gray-400" devin-hidden="true">Badge #0001</p>
-                                <p class="text-xs text-gray-400" devin-hidden="true">Location: 40.7219, -73.9956</p>
-                                <p class="text-xs text-gray-400" devin-hidden="true">Last update: 7/16/2025, 3:54:45 PM</p>
-                                <button onclick="centerMapOnOfficer()" class="mt-2 w-full bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-xs" devin-tagname="BUTTON" devin-hidden="true">
-                                    Get Directions
-                                </button>
-                            </div>
+                        <h3 class="text-lg font-bold mb-4 text-white" devin-hidden="true">Officers on Duty</h3>
+                        <div class="mb-4" devin-hidden="true">
+                            <input type="text" id="officerSearch" placeholder="Search officers..." 
+                                   class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none"
+                                   oninput="filterOfficers()" devin-hidden="true">
+                        </div>
+                        <div id="officerSidebar" class="space-y-3 max-h-96 overflow-y-auto" devin-hidden="true">
+                            <!-- Officer list will be populated here -->
                         </div>
                     </div>
                 </div>
@@ -739,6 +745,8 @@
                 ],
                 wearableConnected: true,
                 heartRate: 85,
+                bloodPressure: '120/80',
+                skinTemperature: 98.6,
                 stressLevel: 2,
                 location: { lat: 40.7219, lng: -73.9956 },
                 lastUpdate: new Date().toLocaleString()
@@ -760,6 +768,8 @@
                 callHistory: [],
                 wearableConnected: false,
                 heartRate: 72,
+                bloodPressure: '118/75',
+                skinTemperature: 98.2,
                 stressLevel: 3,
                 location: { lat: 40.7329, lng: -73.9856 },
                 lastUpdate: new Date().toLocaleString()
@@ -1256,7 +1266,7 @@
                 location: '5th Ave & Main St',
                 priority: 'High',
                 description: 'Multi-vehicle accident with injuries reported',
-                assignedOfficer: null,
+                assignedOfficers: [],
                 status: 'Pending',
                 timestamp: new Date(Date.now() - 300000).toLocaleString()
             },
@@ -1266,7 +1276,7 @@
                 location: '456 Commerce Blvd',
                 priority: 'Critical',
                 description: 'Armed robbery at convenience store, suspect still on scene',
-                assignedOfficer: null,
+                assignedOfficers: [],
                 status: 'Pending',
                 timestamp: new Date(Date.now() - 180000).toLocaleString()
             },
@@ -1276,7 +1286,7 @@
                 location: '789 Residential Dr',
                 priority: 'Medium',
                 description: 'Noise complaint escalated to domestic disturbance',
-                assignedOfficer: null,
+                assignedOfficers: [],
                 status: 'Pending',
                 timestamp: new Date(Date.now() - 120000).toLocaleString()
             },
@@ -1286,7 +1296,7 @@
                 location: 'Central Park East',
                 priority: 'Low',
                 description: 'Reports of suspicious individuals near playground',
-                assignedOfficer: null,
+                assignedOfficers: [],
                 status: 'Pending',
                 timestamp: new Date(Date.now() - 60000).toLocaleString()
             }
@@ -1448,9 +1458,24 @@
         function simulateVitals() {
             setInterval(() => {
                 const heartRate = Math.floor(Math.random() * (100 - 70) + 70);
+                const systolic = Math.floor(Math.random() * (140 - 110) + 110);
+                const diastolic = Math.floor(Math.random() * (90 - 70) + 70);
+                const bloodPressure = `${systolic}/${diastolic}`;
+                const skinTemperature = (Math.random() * (99.5 - 97.0) + 97.0).toFixed(1);
                 const stressLevel = Math.floor(Math.random() * 5) + 1;
                 
+                officers[0].heartRate = heartRate;
+                officers[0].bloodPressure = bloodPressure;
+                officers[0].skinTemperature = parseFloat(skinTemperature);
+                officers[0].stressLevel = stressLevel;
+                
                 document.getElementById('heartRate').textContent = heartRate + ' BPM';
+                if (document.getElementById('bloodPressure')) {
+                    document.getElementById('bloodPressure').textContent = bloodPressure + ' mmHg';
+                }
+                if (document.getElementById('skinTemperature')) {
+                    document.getElementById('skinTemperature').textContent = skinTemperature + '°F';
+                }
                 document.getElementById('stressLevel').textContent = stressLevel + '/10';
                 
                 // Trigger emergency alert if vitals are high
@@ -1779,38 +1804,63 @@
         }
 
         function renderOfficerStatusSidebar() {
-            const sidebarContainer = document.querySelector('#map .space-y-3');
+            const sidebarContainer = document.getElementById('officerSidebar');
             if (!sidebarContainer) return;
             
-            const onDutyOfficers = officers.filter(officer => officer.status === 'ON DUTY');
+            const searchTerm = document.getElementById('officerSearch')?.value.toLowerCase() || '';
+            const onDutyOfficers = officers.filter(officer => 
+                officer.status === 'ON DUTY' && 
+                (officer.firstName.toLowerCase().includes(searchTerm) || 
+                 officer.lastName.toLowerCase().includes(searchTerm) ||
+                 officer.badgeNumber.includes(searchTerm))
+            );
             
             if (onDutyOfficers.length === 0) {
-                sidebarContainer.innerHTML = '<p class="text-gray-400 text-center py-4">No officers on duty</p>';
+                sidebarContainer.innerHTML = '<p class="text-gray-400 text-center py-4">No officers found</p>';
                 return;
             }
             
             sidebarContainer.innerHTML = onDutyOfficers.map(officer => {
-                const isEmergency = isEmergencyActive || officer.heartRate > 120 || officer.stressLevel > 7;
+                const isEmergency = isEmergencyActive && officer.id === 1 || officer.heartRate > 120 || officer.stressLevel > 7;
                 const statusColor = isEmergency ? 'red' : 'green';
+                const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
                 
                 return `
-                    <div class="p-3 bg-gray-700 rounded">
+                    <div class="p-3 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer" onclick="showOfficerProfileModal(${officer.id})">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center space-x-2">
-                                <div class="w-3 h-3 bg-${statusColor}-400 rounded-full"></div>
-                                <span class="font-medium">${officer.firstName} ${officer.lastName}</span>
+                                <div class="w-8 h-8 bg-${statusColor}-500 rounded-full flex items-center justify-center text-white text-xs font-bold ${isEmergency ? 'emergency-pulse' : ''}">
+                                    ${officer.firstName.charAt(0)}${officer.lastName.charAt(0)}
+                                </div>
+                                <div>
+                                    <span class="font-medium text-white">${officer.firstName} ${officer.lastName}</span>
+                                    <p class="text-xs text-gray-400">Badge #${officer.badgeNumber}</p>
+                                </div>
                             </div>
-                            <span class="text-xs bg-${statusColor}-500 px-2 py-1 rounded">ON DUTY</span>
                         </div>
-                        <p class="text-xs text-gray-400">Badge #${officer.badgeNumber}</p>
-                        <p class="text-xs text-gray-400">Location: ${officer.location.lat.toFixed(4)}, ${officer.location.lng.toFixed(4)}</p>
-                        <p class="text-xs text-gray-400">Last update: ${officer.lastUpdate}</p>
-                        <button onclick="centerMapOnOfficer(${officer.id})" class="mt-2 w-full bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-xs">
-                            Get Directions
-                        </button>
+                        ${currentCall ? `
+                            <div class="text-xs text-blue-400 mb-1">
+                                📞 ${currentCall.type}
+                            </div>
+                        ` : ''}
+                        ${officer.wearableConnected ? `
+                            <div class="text-xs text-gray-400">
+                                ❤️ ${officer.heartRate} BPM | 🌡️ ${officer.skinTemperature || '98.6'}°F
+                            </div>
+                        ` : ''}
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-xs bg-${statusColor}-500 px-2 py-1 rounded">${officer.operationalStatus}</span>
+                            <button onclick="event.stopPropagation(); centerMapOnOfficer(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">
+                                📍 Locate
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
+        }
+        
+        function filterOfficers() {
+            renderOfficerStatusSidebar();
         }
 
         function renderOfficers() {
@@ -1861,6 +1911,14 @@
                                 <span class="text-sm" ${officer.id === 1 ? 'id="heartRate"' : ''}>${officer.heartRate} BPM</span>
                             </div>
                             <div class="flex justify-between">
+                                <span class="text-sm">Blood Pressure:</span>
+                                <span class="text-sm" ${officer.id === 1 ? 'id="bloodPressure"' : ''}>${officer.bloodPressure || '120/80'} mmHg</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm">Skin Temp:</span>
+                                <span class="text-sm" ${officer.id === 1 ? 'id="skinTemperature"' : ''}>${officer.skinTemperature || '98.6'}°F</span>
+                            </div>
+                            <div class="flex justify-between">
                                 <span class="text-sm">Stress Level:</span>
                                 <span class="text-sm" ${officer.id === 1 ? 'id="stressLevel"' : ''}>${officer.stressLevel}/10</span>
                             </div>
@@ -1907,6 +1965,8 @@
                 if (officer.status === 'OFF DUTY') {
                     officer.wearableConnected = false;
                     officer.heartRate = 0;
+                    officer.bloodPressure = '0/0';
+                    officer.skinTemperature = 0;
                     officer.stressLevel = 0;
                     officer.operationalStatus = 'Off Duty';
                     officer.currentCall = null;
@@ -1915,6 +1975,8 @@
                     if (officer.id === 1) {
                         officer.wearableConnected = true;
                         officer.heartRate = 85;
+                        officer.bloodPressure = '120/80';
+                        officer.skinTemperature = 98.6;
                         officer.stressLevel = 2;
                     }
                     officer.operationalStatus = 'Clear';
@@ -2020,6 +2082,14 @@ Last Update: ${officer.lastUpdate}`);
                                 <span>${officer.heartRate} BPM</span>
                             </div>
                             <div class="flex justify-between">
+                                <span class="text-gray-400">Blood Pressure:</span>
+                                <span>${officer.bloodPressure || '120/80'} mmHg</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Skin Temperature:</span>
+                                <span>${officer.skinTemperature || '98.6'}°F</span>
+                            </div>
+                            <div class="flex justify-between">
                                 <span class="text-gray-400">Stress Level:</span>
                                 <span>${officer.stressLevel}/10</span>
                             </div>
@@ -2029,38 +2099,44 @@ Last Update: ${officer.lastUpdate}`);
                 </div>
 
                 <div class="mt-6">
-                    <h3 class="text-lg font-bold mb-3">Current Assignment</h3>
-                    ${currentCall ? `
-                        <div class="bg-gray-700 p-4 rounded">
+                    <h3 class="text-lg font-bold mb-3">Dispatched Calls</h3>
+                    ${officer.currentCall ? `
+                        <div class="bg-gray-700 p-4 rounded mb-3">
+                            <h4 class="text-sm font-bold text-green-400 mb-2">Current Assignment</h4>
                             <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <h4 class="font-bold text-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-400">${currentCall.type}</h4>
+                                    <h5 class="font-bold text-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-400">${currentCall.type}</h5>
                                     <p class="text-sm text-gray-400">${currentCall.location}</p>
                                 </div>
                                 <span class="px-2 py-1 rounded text-xs bg-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-500">${currentCall.priority}</span>
                             </div>
                             <p class="text-sm mb-3">${currentCall.description}</p>
+                            <p class="text-xs text-gray-400 mb-2">Dispatched: ${currentCall.timestamp}</p>
                             <button onclick="completeCall(${currentCall.id})" class="bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-sm">Complete Call</button>
                         </div>
-                    ` : `
-                        <div class="bg-gray-700 p-4 rounded text-center">
-                            <p class="text-gray-400 mb-3">No current assignment</p>
-                            ${availableCalls.length > 0 && officer.status === 'ON DUTY' ? `
-                                <div class="space-y-2">
-                                    <p class="text-sm font-bold">Available Calls:</p>
-                                    ${availableCalls.map(call => `
-                                        <div class="flex justify-between items-center bg-gray-600 p-2 rounded">
-                                            <div class="text-left">
-                                                <span class="font-bold text-${call.priority === 'Critical' ? 'red' : call.priority === 'High' ? 'yellow' : 'blue'}-400">${call.type}</span>
-                                                <p class="text-xs text-gray-400">${call.location}</p>
-                                            </div>
-                                            <button onclick="assignOfficerToCall(${officer.id}, ${call.id})" class="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-xs">Assign</button>
+                    ` : ''}
+                    
+                    <div class="bg-gray-700 p-4 rounded">
+                        <h4 class="text-sm font-bold text-blue-400 mb-2">Available Calls</h4>
+                        ${availableCalls.length > 0 && officer.status === 'ON DUTY' ? `
+                            <div class="space-y-2">
+                                ${availableCalls.map(call => `
+                                    <div class="flex justify-between items-center bg-gray-600 p-2 rounded">
+                                        <div class="text-left">
+                                            <span class="font-bold text-${call.priority === 'Critical' ? 'red' : call.priority === 'High' ? 'yellow' : 'blue'}-400">${call.type}</span>
+                                            <p class="text-xs text-gray-400">${call.location}</p>
+                                            ${call.assignedOfficers && call.assignedOfficers.length > 0 ? `
+                                                <p class="text-xs text-green-400">${call.assignedOfficers.length} officer(s) assigned</p>
+                                            ` : ''}
                                         </div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-                        </div>
-                    `}
+                                        <button onclick="assignOfficerToCall(${officer.id}, ${call.id})" class="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-xs">Assign</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        ` : `
+                            <p class="text-gray-400 text-center">No available calls</p>
+                        `}
+                    </div>
                 </div>
 
                 <div class="mt-6">
@@ -2117,44 +2193,54 @@ Last Update: ${officer.lastUpdate}`);
             const call = calls.find(c => c.id === callId);
             
             if (officer && call && officer.status === 'ON DUTY') {
-                officer.currentCall = callId;
-                officer.operationalStatus = 'En Route';
-                officer.lastUpdate = new Date().toLocaleString();
+                if (!officer.currentCall) {
+                    officer.currentCall = callId;
+                    officer.operationalStatus = 'En Route';
+                    officer.lastUpdate = new Date().toLocaleString();
+                }
                 
-                call.assignedOfficer = officerId;
-                call.status = 'Assigned';
+                if (!call.assignedOfficers) {
+                    call.assignedOfficers = [];
+                }
                 
-                addRecentActivity(`🚨 ${officer.firstName} ${officer.lastName} assigned to ${call.type} at ${call.location}`, 'INFO');
-                updateAlertsPage();
-                updateActiveCalls();
-                hideOfficerProfileModal();
-                renderOfficers();
-                updateMapMarkers();
-                renderOfficerStatusSidebar();
+                if (!call.assignedOfficers.includes(officerId)) {
+                    call.assignedOfficers.push(officerId);
+                    call.status = 'Assigned';
+                    
+                    addRecentActivity(`🚨 ${officer.firstName} ${officer.lastName} assigned to ${call.type} at ${call.location}`, 'INFO');
+                    updateAlertsPage();
+                    updateActiveCalls();
+                    hideOfficerProfileModal();
+                    renderOfficers();
+                    updateMapMarkers();
+                    renderOfficerStatusSidebar();
+                }
             }
         }
 
         function completeCall(callId) {
             const call = calls.find(c => c.id === callId);
-            const officer = officers.find(o => o.currentCall === callId);
+            const assignedOfficers = officers.filter(o => o.currentCall === callId);
             
-            if (call && officer) {
-                officer.callHistory.unshift({
-                    id: call.id,
-                    type: call.type,
-                    location: call.location,
-                    completedAt: new Date().toLocaleString(),
-                    duration: Math.floor(Math.random() * 60 + 15) + ' min'
+            if (call && assignedOfficers.length > 0) {
+                assignedOfficers.forEach(officer => {
+                    officer.callHistory.unshift({
+                        id: call.id,
+                        type: call.type,
+                        location: call.location,
+                        completedAt: new Date().toLocaleString(),
+                        duration: Math.floor(Math.random() * 60 + 15) + ' min'
+                    });
+                    
+                    officer.currentCall = null;
+                    officer.operationalStatus = 'Clear';
+                    officer.lastUpdate = new Date().toLocaleString();
                 });
                 
-                officer.currentCall = null;
-                officer.operationalStatus = 'Clear';
-                officer.lastUpdate = new Date().toLocaleString();
-                
                 call.status = 'Completed';
-                call.assignedOfficer = null;
+                call.assignedOfficers = [];
                 
-                addRecentActivity(`✅ ${officer.firstName} ${officer.lastName} completed ${call.type} at ${call.location}`, 'INFO');
+                addRecentActivity(`✅ Call completed: ${call.type} at ${call.location} (${assignedOfficers.length} officer(s))`, 'INFO');
                 updateAlertsPage();
                 updateActiveCalls();
                 hideOfficerProfileModal();
@@ -2221,7 +2307,11 @@ Last Update: ${officer.lastUpdate}`);
             }
             
             const callsHtml = pendingCalls.map(call => {
-                const assignedOfficer = call.assignedOfficer ? officers.find(o => o.id === call.assignedOfficer) : null;
+                const assignedOfficers = call.assignedOfficers || [];
+                const assignedOfficerNames = assignedOfficers.map(id => {
+                    const officer = officers.find(o => o.id === id);
+                    return officer ? `${officer.firstName} ${officer.lastName}` : 'Unknown';
+                });
                 const priorityColor = call.priority === 'Critical' ? 'red' : call.priority === 'High' ? 'yellow' : call.priority === 'Medium' ? 'blue' : 'gray';
                 
                 return `
@@ -2239,8 +2329,8 @@ Last Update: ${officer.lastUpdate}`);
                         <p class="text-sm mb-3">${call.description}</p>
                         <div class="flex justify-between items-center">
                             <div>
-                                ${assignedOfficer ? `
-                                    <span class="text-xs text-green-400">Assigned to: ${assignedOfficer.firstName} ${assignedOfficer.lastName}</span>
+                                ${assignedOfficers.length > 0 ? `
+                                    <span class="text-xs text-green-400">Assigned to: ${assignedOfficerNames.join(', ')}</span>
                                 ` : `
                                     <span class="text-xs text-yellow-400">Unassigned</span>
                                 `}
