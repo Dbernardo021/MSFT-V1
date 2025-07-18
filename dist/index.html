@@ -297,7 +297,7 @@
             </div>
             
             <div class="space-y-2">
-                <button onclick="showSection('dashboard')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="0" devin-tagname="BUTTON">
+                <button onclick="showSection('dashboard'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300 min-h-[44px]" devinid="0" devin-tagname="BUTTON">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
                     </svg>
@@ -336,7 +336,7 @@
             </div>
         </nav>
 
-        <main class="flex-1 p-6 overflow-auto" devin-tagname="MAIN" devin-scrollable="true">
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto" devin-tagname="MAIN" devin-scrollable="true">
             <!-- Dashboard Section -->
             <div id="dashboard" class="section hidden" devin-hidden="true">
                 <div class="mb-6" devin-hidden="true">
@@ -344,7 +344,7 @@
                     <p class="text-gray-400" devin-hidden="true">TACTICAL OPERATIONS CENTER - REAL-TIME OFFICER MONITORING</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8" devin-hidden="true">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8" devin-hidden="true">
                     <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
                         <div class="flex items-center justify-between" devin-hidden="true">
                             <div devin-hidden="true">
@@ -428,7 +428,7 @@
                     <button onclick="showAddOfficerModal()" class="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg font-medium" devin-tagname="BUTTON" devin-hidden="true">+ Add Officer</button>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="officersContainer" devin-hidden="true">
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6" id="officersContainer" devin-hidden="true">
                     <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
                         <div class="flex items-center justify-between mb-4" devin-hidden="true">
                             <div class="flex items-center space-x-3" devin-hidden="true">
@@ -544,7 +544,7 @@
                     <p class="text-gray-400" devin-hidden="true">Monitor and manage officer safety alerts</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" devin-hidden="true">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8" devin-hidden="true">
                     <div class="bg-gray-800 p-6 rounded-lg" devin-hidden="true">
                         <div class="flex items-center justify-between" devin-hidden="true">
                             <div devin-hidden="true">
@@ -705,7 +705,7 @@
             </div>
 
             <!-- Officer Profile Modal -->
-            <div id="officerProfileModal" class="fixed top-0 right-0 h-full w-96 bg-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 hidden" devin-hidden="true">
+            <div id="officerProfileModal" class="fixed top-0 right-0 h-full w-full sm:w-96 max-w-md bg-gray-800 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out z-50 hidden" devin-hidden="true">
                 <div class="h-full overflow-y-auto p-6" devin-hidden="true">
                     <div class="flex justify-between items-center mb-4" devin-hidden="true">
                         <h2 class="text-xl font-bold text-white" devin-hidden="true">Officer Profile</h2>
@@ -784,7 +784,7 @@
 
                         <div class="mb-4">
                             <label class="block text-sm font-medium mb-2">Quick Responses</label>
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <button onclick="sendOfficerResponse('ok')" class="bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-sm" devinid="11" devin-tagname="BUTTON">
                                     I'm OK
                                 </button>
@@ -845,7 +845,7 @@
             </div>
             
             <form id="addOfficerForm" class="space-y-4" devin-hidden="true">
-                <div class="grid grid-cols-2 gap-4" devin-hidden="true">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" devin-hidden="true">
                     <div devin-hidden="true">
                         <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">First Name</label>
                         <input type="text" id="firstName" required="" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
@@ -861,7 +861,7 @@
                     <input type="text" id="badgeNumber" required="" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4" devin-hidden="true">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" devin-hidden="true">
                     <div devin-hidden="true">
                         <label class="block text-sm font-medium text-gray-300 mb-1" devin-hidden="true">Height</label>
                         <input type="text" id="height" placeholder="e.g., 5'10&quot;" class="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-blue-500 focus:outline-none" devin-hidden="true">
