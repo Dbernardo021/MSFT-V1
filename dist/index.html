@@ -1590,14 +1590,12 @@
             
             // Update navigation buttons
             document.querySelectorAll('nav button').forEach(btn => {
-                btn.classList.remove('bg-blue-600', 'text-white');
                 btn.classList.add('hover:bg-gray-700', 'text-gray-300');
             });
             
             // Only update button styles if event exists and has a target
             if (typeof event !== 'undefined' && event && event.target && event.target.classList) {
-                event.target.classList.add('bg-blue-600', 'text-white');
-                event.target.classList.remove('hover:bg-gray-700', 'text-gray-300');
+                // No special styling for active buttons - keep consistent gray styling
             }
             
             // Initialize map if map section is shown
