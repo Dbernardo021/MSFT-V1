@@ -182,16 +182,21 @@
             text-align: center;
         }
         
-        /* Officer profile expansion below map */
+        /* Officer profile expansion over map */
         .map-profile-expansion {
             background: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            margin-top: 16px;
             padding: 0;
             max-height: 0;
             overflow: hidden;
             transition: all 0.3s ease-in-out;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
         
         .map-profile-expansion.expanded {
@@ -1647,9 +1652,9 @@
             
             const officerIcon = L.divIcon({
                 className: `officer-marker ${emergencyClass}`,
-                html: `<div style="background-color: ${markerColor}; color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${initials}</div>`,
-                iconSize: [40, 40],
-                iconAnchor: [20, 20]
+                html: `<div style="background-color: ${markerColor}; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${initials}</div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
             });
             
             const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
@@ -1856,6 +1861,17 @@
             if (message) {
                 sendMessage('Officer Daniel Bernardo', message, 'officer');
                 document.getElementById('officerCustomResponse').value = '';
+            }
+        }
+
+        function sendOfficerMessage(officerId) {
+            const officer = officers.find(o => o.id === officerId);
+            if (!officer) return;
+            
+            const message = prompt(`Send message to ${officer.firstName} ${officer.lastName}:`);
+            if (message && message.trim()) {
+                sendMessage('911 Dispatch', message.trim(), 'dispatch');
+                showMessageToast(`Message sent to ${officer.firstName} ${officer.lastName}`);
             }
         }
 
@@ -2078,9 +2094,14 @@
                         </div>
                         <div class="flex justify-between items-center mt-2">
                             <span class="text-xs bg-${statusColor}-500 px-2 py-1 rounded">${officer.operationalStatus}</span>
-                            <button onclick="event.stopPropagation(); centerMapOnOfficer(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">
-                                Locate
-                            </button>
+                            <div class="flex space-x-2">
+                                <button onclick="event.stopPropagation(); sendOfficerMessage(${officer.id})" class="text-xs bg-green-500 hover:bg-green-600 px-2 py-1 rounded">
+                                    Message
+                                </button>
+                                <button onclick="event.stopPropagation(); centerMapOnOfficer(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">
+                                    Locate
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
