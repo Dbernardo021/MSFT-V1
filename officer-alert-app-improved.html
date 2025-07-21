@@ -367,14 +367,14 @@
             }
             
             /* Main content area mobile adjustments */
-            main {
+            main.main-content {
                 padding: 12px !important;
                 width: 100% !important;
                 overflow-x: hidden !important;
             }
             
             /* Grid responsive adjustments for very small screens */
-            .grid {
+            .grid.grid-cols-1 {
                 gap: 12px !important;
             }
             
@@ -395,12 +395,12 @@
             }
             
             /* Reduce padding on very small screens */
-            main {
+            main.main-content {
                 padding: 8px !important;
             }
             
             /* Single column layout for very small screens */
-            .grid {
+            .grid.grid-cols-1 {
                 grid-template-columns: 1fr !important;
                 gap: 8px !important;
             }
@@ -431,7 +431,7 @@
         /* Extra small devices breakpoint */
         @media (max-width: 320px) {
             /* Further reduce spacing for extra small screens */
-            main {
+            main.main-content {
                 padding: 4px !important;
             }
             
