@@ -299,7 +299,7 @@
                 display: block;
                 position: fixed;
                 top: 20px;
-                left: 20px;
+                right: 20px;
                 z-index: 1001;
                 background: var(--bg-tertiary);
                 border: 1px solid var(--border-color);
@@ -593,7 +593,7 @@
                             <button onclick="triggerEmergency()" class="officer-button bg-red-500 hover:bg-red-600 text-white" devin-tagname="BUTTON" devin-hidden="true">
                                 Emergency
                             </button>
-                            <button onclick="clearEmergencyStatus()" class="officer-button bg-red-600 hover:bg-red-700 text-white" devin-tagname="BUTTON" devin-hidden="true">
+                            <button onclick="clearEmergencyStatus()" class="officer-button bg-orange-600 hover:bg-orange-700 text-white" devin-tagname="BUTTON" devin-hidden="true">
                                 Clear Emergency
                             </button>
                         </div>
@@ -851,7 +851,7 @@
                                 <button onclick="sendQuickMessage('status_check')" class="w-full bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-left" devinid="6" devin-tagname="BUTTON">
                                     🚨 Status Check - Are you okay?
                                 </button>
-                                <button onclick="sendQuickMessage('backup_needed')" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-left" devinid="7" devin-tagname="BUTTON">
+                                <button onclick="sendQuickMessage('backup_needed')" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-left" devinid="7" devin-tagname="BUTTON">
                                     🚔 Backup en route to your location
                                 </button>
                                 <button onclick="sendQuickMessage('medical_alert')" class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-left" devinid="8" devin-tagname="BUTTON">
@@ -1603,7 +1603,7 @@
             const themeIcon = document.getElementById('themeIcon');
             
             if (body.getAttribute('data-theme') === 'light') {
-                body.removeAttribute('data-theme');
+                body.setAttribute('data-theme', 'dark');
                 themeIcon.textContent = '🌙';
                 localStorage.setItem('theme', 'dark');
             } else {
@@ -1631,10 +1631,13 @@
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme');
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.body.setAttribute('data-theme', savedTheme);
             if (savedTheme === 'light') {
-                document.body.setAttribute('data-theme', 'light');
                 document.getElementById('themeIcon').textContent = '☀️';
+            } else {
+                document.getElementById('themeIcon').textContent = '🌙';
+            }
             }
             
             showSection('dashboard');
@@ -2290,7 +2293,7 @@
                             <button onclick="triggerEmergency()" class="officer-button bg-red-500 hover:bg-red-600 text-white">
                                 Emergency
                             </button>
-                            <button onclick="clearEmergencyStatus()" class="officer-button bg-red-600 hover:bg-red-700 text-white">
+                            <button onclick="clearEmergencyStatus()" class="officer-button bg-orange-600 hover:bg-orange-700 text-white">
                                 Clear Emergency
                             </button>
                         </div>
