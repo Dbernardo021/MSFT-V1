@@ -394,25 +394,29 @@
                 right: 15px;
             }
             
-            /* Reduce padding on very small screens - target all possible Tailwind classes */
-            main.main-content.flex-1.p-4,
-            main.main-content.flex-1,
-            main.main-content {
-                padding: 8px !important;
+            /* Force mobile padding using CSS custom properties and direct style override */
+            * {
+                --mobile-padding: 8px;
             }
             
-            /* Single column layout for very small screens - target all grid variations */
-            .grid.grid-cols-1.sm\:grid-cols-2.lg\:grid-cols-4.gap-4.md\:gap-6,
-            .grid.grid-cols-1.md\:grid-cols-2.xl\:grid-cols-3.gap-4.md\:gap-6,
-            .grid.grid-cols-1.lg\:grid-cols-4.gap-6,
-            .grid.grid-cols-1.md\:grid-cols-3.gap-4.md\:gap-6,
-            .grid.grid-cols-1.lg\:grid-cols-2.gap-6,
-            .grid.grid-cols-1.sm\:grid-cols-2.gap-2,
-            .grid.grid-cols-1.sm\:grid-cols-2.gap-4,
-            .grid.grid-cols-1 {
-                grid-template-columns: 1fr !important;
-                gap: 8px !important;
+            main[class*="main-content"] {
+                padding: var(--mobile-padding) !important;
+                width: 100% !important;
+                overflow-x: hidden !important;
             }
+            
+            /* Force single column layout using attribute selectors */
+            div[class*="grid"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--mobile-padding) !important;
+            }
+            
+            /* Additional force override using universal selector */
+            body * {
+                --tw-space-x-reverse: 0 !important;
+                --tw-space-y-reverse: 0 !important;
+            }
+        }
             
             /* Smaller text and spacing for very small screens */
             h1, h2, h3 {
@@ -440,10 +444,16 @@
         /* Extra small devices breakpoint */
         @media (max-width: 320px) {
             /* Further reduce spacing for extra small screens */
-            main.main-content.flex-1.p-4,
-            main.main-content.flex-1,
-            main.main-content {
-                padding: 4px !important;
+            * {
+                --mobile-padding: 4px;
+            }
+            
+            main[class*="main-content"] {
+                padding: var(--mobile-padding) !important;
+            }
+            
+            div[class*="grid"] {
+                gap: var(--mobile-padding) !important;
             }
             
             .mobile-nav-toggle {
