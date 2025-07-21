@@ -365,6 +365,99 @@
             .map-container {
                 height: 300px !important;
             }
+            
+            /* Main content area mobile adjustments */
+            main {
+                padding: 12px;
+                width: 100%;
+                overflow-x: hidden;
+            }
+            
+            /* Grid responsive adjustments for very small screens */
+            .grid {
+                gap: 12px !important;
+            }
+            
+            /* Ensure content doesn't overflow on small screens */
+            .bg-gray-800, .bg-gray-700 {
+                margin: 0 !important;
+                padding: 12px !important;
+            }
+        }
+        
+        /* Additional breakpoint for very small mobile devices */
+        @media (max-width: 480px) {
+            /* Smaller navigation toggle for very small screens */
+            .mobile-nav-toggle {
+                padding: 8px;
+                top: 15px;
+                right: 15px;
+            }
+            
+            /* Reduce padding on very small screens */
+            main {
+                padding: 8px;
+            }
+            
+            /* Single column layout for very small screens */
+            .grid {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+            
+            /* Smaller text and spacing for very small screens */
+            h1, h2, h3 {
+                font-size: 1.2rem !important;
+            }
+            
+            .text-xl {
+                font-size: 1.1rem !important;
+            }
+            
+            /* Adjust button sizing for very small screens */
+            button, .button {
+                min-height: 40px;
+                min-width: 40px;
+                padding: 8px 12px;
+                font-size: 0.9rem;
+            }
+            
+            /* Reduce card padding on very small screens */
+            .bg-gray-800, .bg-gray-700 {
+                padding: 8px !important;
+            }
+        }
+        
+        /* Extra small devices breakpoint */
+        @media (max-width: 320px) {
+            /* Further reduce spacing for extra small screens */
+            main {
+                padding: 4px;
+            }
+            
+            .mobile-nav-toggle {
+                padding: 6px;
+                top: 10px;
+                right: 10px;
+            }
+            
+            /* Ensure minimum usable button size */
+            button, .button {
+                min-height: 36px;
+                min-width: 36px;
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            
+            /* Reduce card padding further */
+            .bg-gray-800, .bg-gray-700 {
+                padding: 6px !important;
+            }
+            
+            /* Smaller grid gaps */
+            .grid {
+                gap: 6px !important;
+            }
         }
         
         @media (min-width: 769px) {
