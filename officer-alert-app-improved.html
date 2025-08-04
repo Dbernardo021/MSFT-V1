@@ -1638,7 +1638,6 @@
             } else {
                 document.getElementById('themeIcon').textContent = '🌙';
             }
-            }
             
             showSection('dashboard');
             simulateVitals();
@@ -1891,7 +1890,11 @@
             const activityContainer = document.getElementById('recentActivity');
             const timestamp = new Date().toLocaleString();
             
-            const colorClass = type === 'CRITICAL' ? 'bg-red-500' : type === 'INFO' ? 'bg-blue-500' : 'bg-gray-500';
+            const colorClass = (() => {
+                if (type === 'CRITICAL') return 'bg-red-500';
+                if (type === 'INFO') return 'bg-blue-500';
+                return 'bg-gray-500';
+            })();
             const pulseClass = type === 'CRITICAL' ? 'emergency-pulse' : '';
             
             const activityItem = document.createElement('div');
@@ -2156,7 +2159,8 @@
             const sidebarContainer = document.getElementById('officerSidebar');
             if (!sidebarContainer) return;
             
-            const searchTerm = document.getElementById('officerSearch')?.value.toLowerCase() || '';
+            const searchElement = document.getElementById('officerSearch');
+            const searchTerm = searchElement ? searchElement.value.toLowerCase() : '';
             const onDutyOfficers = officers.filter(officer => 
                 officer.status === 'ON DUTY' && 
                 (officer.firstName.toLowerCase().includes(searchTerm) || 
@@ -2178,7 +2182,9 @@
                     <div class="p-3 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer" onclick="showOfficerProfileModal(${officer.id})">
                         <div class="flex items-center justify-between mb-2">
                             <div class="flex items-center space-x-2">
-                                <div class="w-8 h-8 bg-${statusColor}-500 rounded-full flex items-center justify-center text-white text-xs font-bold ${isEmergency ? 'emergency-pulse' : ''}">
+                                <div class="w-8 h-8 bg-${statusColor}-500 rounded-full flex items-center justify-center text-white text-xs font-bold ${(() => {
+                                    return isEmergency ? 'emergency-pulse' : '';
+                                })()}">
                                     ${officer.firstName.charAt(0)}${officer.lastName.charAt(0)}
                                 </div>
                                 <div>
@@ -2245,12 +2251,20 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-sm status-text">Operational:</span>
-                                <span class="text-sm bg-${officer.operationalStatus === 'Clear' ? 'green' : officer.operationalStatus === 'En Route' ? 'yellow' : officer.operationalStatus === 'On Scene' ? 'red' : 'gray'}-500 px-2 py-1 rounded status-text">${officer.operationalStatus}</span>
+                                <span class="text-sm bg-${(() => {
+                                    if (officer.operationalStatus === 'Clear') return 'green';
+                                    if (officer.operationalStatus === 'En Route') return 'yellow';
+                                    if (officer.operationalStatus === 'On Scene') return 'red';
+                                    return 'gray';
+                                })()}-500 px-2 py-1 rounded status-text">${officer.operationalStatus}</span>
                             </div>
                             ${officer.currentCall ? `
                             <div class="flex justify-between">
                                 <span class="text-sm">Current Call:</span>
-                                <span class="text-sm text-blue-400">${calls.find(c => c.id === officer.currentCall)?.type || 'Unknown'}</span>
+                                <span class="text-sm text-blue-400">${(() => {
+                                    const call = calls.find(c => c.id === officer.currentCall);
+                                    return call ? call.type : 'Unknown';
+                                })()}</span>
                             </div>
                             ` : ''}
                             <div class="flex justify-between">
@@ -2259,19 +2273,27 @@
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-sm">Heart Rate:</span>
-                                <span class="text-sm" ${officer.id === 1 ? 'id="heartRate"' : ''}>${officer.heartRate} BPM</span>
+                                <span class="text-sm" ${(() => {
+                                    return officer.id === 1 ? 'id="heartRate"' : '';
+                                })()}>${officer.heartRate} BPM</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-sm">Blood Pressure:</span>
-                                <span class="text-sm" ${officer.id === 1 ? 'id="bloodPressure"' : ''}>${officer.bloodPressure || '120/80'} mmHg</span>
+                                <span class="text-sm" ${(() => {
+                                    return officer.id === 1 ? 'id="bloodPressure"' : '';
+                                })()}>${officer.bloodPressure || '120/80'} mmHg</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-sm">Skin Temp:</span>
-                                <span class="text-sm" ${officer.id === 1 ? 'id="skinTemperature"' : ''}>${officer.skinTemperature || '98.6'}°F</span>
+                                <span class="text-sm" ${(() => {
+                                    return officer.id === 1 ? 'id="skinTemperature"' : '';
+                                })()}>${officer.skinTemperature || '98.6'}°F</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-sm">Stress Level:</span>
-                                <span class="text-sm" ${officer.id === 1 ? 'id="stressLevel"' : ''}>${officer.stressLevel}/10</span>
+                                <span class="text-sm" ${(() => {
+                                    return officer.id === 1 ? 'id="stressLevel"' : '';
+                                })()}>${officer.stressLevel}/10</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-sm">Unit:</span>
@@ -2287,8 +2309,12 @@
                             <button onclick="viewOfficerDetails(${officer.id})" class="officer-button bg-blue-500 hover:bg-blue-600 text-white">
                                 Details
                             </button>
-                            <button onclick="toggleOfficerStatus(${officer.id})" class="officer-button ${officer.status === 'ON DUTY' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white">
-                                ${officer.status === 'ON DUTY' ? 'Off Duty' : 'On Duty'}
+                            <button onclick="toggleOfficerStatus(${officer.id})" class="officer-button ${(() => {
+                                return officer.status === 'ON DUTY' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600';
+                            })()} text-white">
+                                ${(() => {
+                                    return officer.status === 'ON DUTY' ? 'Off Duty' : 'On Duty';
+                                })()}
                             </button>
                             <button onclick="triggerEmergency()" class="officer-button bg-red-500 hover:bg-red-600 text-white">
                                 Emergency
@@ -2357,7 +2383,10 @@ Unit: ${officer.unit}
 Patrol Section: ${officer.patrolSection}
 Status: ${officer.status}
 Operational Status: ${officer.operationalStatus}
-Current Call: ${officer.currentCall ? calls.find(c => c.id === officer.currentCall)?.type + ' at ' + calls.find(c => c.id === officer.currentCall)?.location : 'None'}
+Current Call: ${officer.currentCall ? (() => {
+                    const call = calls.find(c => c.id === officer.currentCall);
+                    return call ? call.type + ' at ' + call.location : 'Unknown';
+                })() : 'None'}
 Last Update: ${officer.lastUpdate}`);
             }
         }
@@ -2403,7 +2432,9 @@ Last Update: ${officer.lastUpdate}`);
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400">Duty Status:</span>
-                                <span class="px-2 py-1 rounded text-sm ${officer.status === 'ON DUTY' ? 'bg-green-500' : 'bg-gray-500'}">${officer.status}</span>
+                                <span class="px-2 py-1 rounded text-sm ${(() => {
+                                    return officer.status === 'ON DUTY' ? 'bg-green-500' : 'bg-gray-500';
+                                })()}">${officer.status}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400">Operational Status:</span>
@@ -2485,15 +2516,25 @@ Last Update: ${officer.lastUpdate}`);
                         <div class="space-y-3">
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400">Duty Status:</span>
-                                <span class="px-2 py-1 rounded text-sm ${officer.status === 'ON DUTY' ? 'bg-green-500' : 'bg-gray-500'}">${officer.status}</span>
+                                <span class="px-2 py-1 rounded text-sm ${(() => {
+                                    return officer.status === 'ON DUTY' ? 'bg-green-500' : 'bg-gray-500';
+                                })()}">${officer.status}</span>
                             </div>
                             <div class="flex justify-between items-center">
                                 <span class="text-gray-400">Operational Status:</span>
                                 <select onchange="updateOfficerOperationalStatus(${officer.id}, this.value)" class="bg-gray-700 text-white px-2 py-1 rounded text-sm">
-                                    <option value="Clear" ${officer.operationalStatus === 'Clear' ? 'selected' : ''}>Clear/Available</option>
-                                    <option value="En Route" ${officer.operationalStatus === 'En Route' ? 'selected' : ''}>En Route</option>
-                                    <option value="On Scene" ${officer.operationalStatus === 'On Scene' ? 'selected' : ''}>On Scene</option>
-                                    <option value="Unavailable" ${officer.operationalStatus === 'Unavailable' ? 'selected' : ''}>Unavailable</option>
+                                    <option value="Clear" ${(() => {
+                                        return officer.operationalStatus === 'Clear' ? 'selected' : '';
+                                    })()}>Clear/Available</option>
+                                    <option value="En Route" ${(() => {
+                                        return officer.operationalStatus === 'En Route' ? 'selected' : '';
+                                    })()}>En Route</option>
+                                    <option value="On Scene" ${(() => {
+                                        return officer.operationalStatus === 'On Scene' ? 'selected' : '';
+                                    })()}>On Scene</option>
+                                    <option value="Unavailable" ${(() => {
+                                        return officer.operationalStatus === 'Unavailable' ? 'selected' : '';
+                                    })()}>Unavailable</option>
                                 </select>
                             </div>
                             <div class="flex justify-between">
@@ -2523,10 +2564,18 @@ Last Update: ${officer.lastUpdate}`);
                             <h4 class="text-sm font-bold text-green-400 mb-2">Current Assignment</h4>
                             <div class="flex justify-between items-start mb-2">
                                 <div>
-                                    <h5 class="font-bold text-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-400">${currentCall.type}</h5>
+                                    <h5 class="font-bold text-${(() => {
+                                        if (currentCall.priority === 'Critical') return 'red';
+                                        if (currentCall.priority === 'High') return 'yellow';
+                                        return 'blue';
+                                    })()}-400">${currentCall.type}</h5>
                                     <p class="text-sm text-gray-400">${currentCall.location}</p>
                                 </div>
-                                <span class="px-2 py-1 rounded text-xs bg-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-500">${currentCall.priority}</span>
+                                <span class="px-2 py-1 rounded text-xs bg-${(() => {
+                                    if (currentCall.priority === 'Critical') return 'red';
+                                    if (currentCall.priority === 'High') return 'yellow';
+                                    return 'blue';
+                                })()}-500">${currentCall.priority}</span>
                             </div>
                             <p class="text-sm mb-3">${currentCall.description}</p>
                             <p class="text-xs text-gray-400 mb-2">Dispatched: ${currentCall.timestamp}</p>
@@ -2541,7 +2590,11 @@ Last Update: ${officer.lastUpdate}`);
                                 ${availableCalls.map(call => `
                                     <div class="flex justify-between items-center bg-gray-600 p-2 rounded">
                                         <div class="text-left">
-                                            <span class="font-bold text-${call.priority === 'Critical' ? 'red' : call.priority === 'High' ? 'yellow' : 'blue'}-400">${call.type}</span>
+                                            <span class="font-bold text-${(() => {
+                                                if (call.priority === 'Critical') return 'red';
+                                                if (call.priority === 'High') return 'yellow';
+                                                return 'blue';
+                                            })()}-400">${call.type}</span>
                                             <p class="text-xs text-gray-400">${call.location}</p>
                                             ${call.assignedOfficers && call.assignedOfficers.length > 0 ? `
                                                 <p class="text-xs text-green-400">${call.assignedOfficers.length} officer(s) assigned</p>
@@ -2674,9 +2727,12 @@ Last Update: ${officer.lastUpdate}`);
             const officerStatusUpdates = officers.map(officer => {
                 const currentCall = officer.currentCall ? calls.find(c => c.id === officer.currentCall) : null;
                 const statusColor = officer.status === 'ON DUTY' ? 'green' : 'gray';
-                const operationalColor = officer.operationalStatus === 'Clear' ? 'green' : 
-                                       officer.operationalStatus === 'En Route' ? 'yellow' : 
-                                       officer.operationalStatus === 'On Scene' ? 'red' : 'gray';
+                const operationalColor = (() => {
+                    if (officer.operationalStatus === 'Clear') return 'green';
+                    if (officer.operationalStatus === 'En Route') return 'yellow';
+                    if (officer.operationalStatus === 'On Scene') return 'red';
+                    return 'gray';
+                })();
                 
                 return `
                     <div class="bg-gray-700 p-4 rounded">
@@ -2696,7 +2752,11 @@ Last Update: ${officer.lastUpdate}`);
                         ${currentCall ? `
                             <div class="mt-2 p-2 bg-gray-600 rounded">
                                 <div class="flex justify-between items-center">
-                                    <span class="text-sm font-bold text-${currentCall.priority === 'Critical' ? 'red' : currentCall.priority === 'High' ? 'yellow' : 'blue'}-400">${currentCall.type}</span>
+                                    <span class="text-sm font-bold text-${(() => {
+                                        if (currentCall.priority === 'Critical') return 'red';
+                                        if (currentCall.priority === 'High') return 'yellow';
+                                        return 'blue';
+                                    })()}-400">${currentCall.type}</span>
                                     <span class="text-xs text-gray-400">${currentCall.location}</span>
                                 </div>
                             </div>
@@ -2730,7 +2790,12 @@ Last Update: ${officer.lastUpdate}`);
                     const officer = officers.find(o => o.id === id);
                     return officer ? `${officer.firstName} ${officer.lastName}` : 'Unknown';
                 });
-                const priorityColor = call.priority === 'Critical' ? 'red' : call.priority === 'High' ? 'yellow' : call.priority === 'Medium' ? 'blue' : 'gray';
+                const priorityColor = (() => {
+                    if (call.priority === 'Critical') return 'red';
+                    if (call.priority === 'High') return 'yellow';
+                    if (call.priority === 'Medium') return 'blue';
+                    return 'gray';
+                })();
                 
                 return `
                     <div class="bg-gray-700 p-4 rounded">
@@ -2741,7 +2806,9 @@ Last Update: ${officer.lastUpdate}`);
                             </div>
                             <div class="text-right">
                                 <span class="px-2 py-1 rounded text-xs bg-${priorityColor}-500">${call.priority}</span>
-                                <span class="px-2 py-1 rounded text-xs ${call.status === 'Assigned' ? 'bg-blue-500' : 'bg-gray-500'} ml-1">${call.status}</span>
+                                <span class="px-2 py-1 rounded text-xs ${(() => {
+                                    return call.status === 'Assigned' ? 'bg-blue-500' : 'bg-gray-500';
+                                })()} ml-1">${call.status}</span>
                             </div>
                         </div>
                         <p class="text-sm mb-3">${call.description}</p>
