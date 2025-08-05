@@ -106,6 +106,54 @@
             background-color: var(--bg-tertiary);
         }
 
+        /* Navigation button theme-aware styles */
+        .nav-button {
+            color: var(--text-secondary) !important;
+            background-color: transparent !important;
+        }
+        
+        .nav-button:hover {
+            background-color: var(--bg-tertiary) !important;
+            color: var(--text-primary) !important;
+        }
+
+        /* Action button theme-aware styles */
+        .btn-primary {
+            background-color: var(--accent-blue) !important;
+            color: #ffffff !important;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3 !important;
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-red) !important;
+            color: #ffffff !important;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc3545 !important;
+        }
+        
+        .btn-warning {
+            background-color: var(--accent-orange) !important;
+            color: #ffffff !important;
+        }
+        
+        .btn-warning:hover {
+            background-color: #d63384 !important;
+        }
+        
+        .btn-success {
+            background-color: var(--accent-green) !important;
+            color: #ffffff !important;
+        }
+        
+        .btn-success:hover {
+            background-color: #198754 !important;
+        }
+
         .map-profile-expansion {
             max-height: 0;
             overflow: hidden;
@@ -554,35 +602,35 @@
             </div>
             
             <div class="space-y-2">
-                <button onclick="showSection('dashboard'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300 min-h-[44px]" devinid="0" devin-tagname="BUTTON">
+                <button onclick="showSection('dashboard'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg nav-button min-h-[44px]" devinid="0" devin-tagname="BUTTON">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
                     </svg>
                     <span>Dashboard</span>
                 </button>
                 
-                <button onclick="showSection('officers'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="1" devin-tagname="BUTTON">
+                <button onclick="showSection('officers'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg nav-button" devinid="1" devin-tagname="BUTTON">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
                     </svg>
                     <span>Officers</span>
                 </button>
                 
-                <button onclick="showSection('map'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="2" devin-tagname="BUTTON">
+                <button onclick="showSection('map'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg nav-button" devinid="2" devin-tagname="BUTTON">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
                     </svg>
                     <span>Map</span>
                 </button>
                 
-                <button onclick="showSection('alerts'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="3" devin-tagname="BUTTON">
+                <button onclick="showSection('alerts'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg nav-button" devinid="3" devin-tagname="BUTTON">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
                     </svg>
                     <span>Alerts</span>
                 </button>
 
-                <button onclick="showSection('messages'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-700 text-gray-300" devinid="4" devin-tagname="BUTTON">
+                <button onclick="showSection('messages'); closeMobileNav();" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg nav-button" devinid="4" devin-tagname="BUTTON">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
@@ -741,16 +789,16 @@
                         </div>
 
                         <div class="officer-button-grid" devin-hidden="true">
-                            <button onclick="viewOfficerDetails(1)" class="officer-button bg-blue-500 hover:bg-blue-600 text-white" devin-tagname="BUTTON" devin-hidden="true">
+                            <button onclick="viewOfficerDetails(1)" class="officer-button btn-primary" devin-tagname="BUTTON" devin-hidden="true">
                                 Details
                             </button>
-                            <button onclick="toggleOfficerStatus(1)" class="officer-button bg-red-500 hover:bg-red-600 text-white" devin-tagname="BUTTON" devin-hidden="true">
+                            <button onclick="toggleOfficerStatus(1)" class="officer-button btn-danger" devin-tagname="BUTTON" devin-hidden="true">
                                 Off Duty
                             </button>
-                            <button onclick="triggerEmergency()" class="officer-button bg-red-500 hover:bg-red-600 text-white" devin-tagname="BUTTON" devin-hidden="true">
+                            <button onclick="triggerEmergency()" class="officer-button btn-danger" devin-tagname="BUTTON" devin-hidden="true">
                                 Emergency
                             </button>
-                            <button onclick="clearEmergencyStatus()" class="officer-button bg-red-600 hover:bg-red-700 text-white" devin-tagname="BUTTON" devin-hidden="true">
+                            <button onclick="clearEmergencyStatus()" class="officer-button btn-danger" devin-tagname="BUTTON" devin-hidden="true">
                                 Clear Emergency
                             </button>
                         </div>
@@ -861,7 +909,7 @@
                         
                         <div class="flex justify-between items-center mt-2" devin-hidden="true">
                             <span class="text-xs text-gray-400" devin-hidden="true">Last Update: 7/16/2025, 5:46:21 PM</span>
-                            <button onclick="showOfficerProfileModal(1)" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded" devin-tagname="BUTTON" devin-hidden="true">View Profile</button>
+                            <button onclick="showOfficerProfileModal(1)" class="text-xs btn-primary px-2 py-1 rounded" devin-tagname="BUTTON" devin-hidden="true">View Profile</button>
                         </div>
                     </div>
                 </div>
@@ -1008,7 +1056,7 @@
                                 <button onclick="sendQuickMessage('status_check')" class="w-full bg-yellow-600 hover:bg-yellow-700 px-4 py-2 rounded text-left" devinid="6" devin-tagname="BUTTON">
                                     🚨 Status Check - Are you okay?
                                 </button>
-                                <button onclick="sendQuickMessage('backup_needed')" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-left" devinid="7" devin-tagname="BUTTON">
+                                <button onclick="sendQuickMessage('backup_needed')" class="w-full btn-danger px-4 py-2 rounded text-left" devinid="7" devin-tagname="BUTTON">
                                     🚔 Backup en route to your location
                                 </button>
                                 <button onclick="sendQuickMessage('medical_alert')" class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded text-left" devinid="8" devin-tagname="BUTTON">
@@ -1045,10 +1093,10 @@
                                 <button onclick="sendOfficerResponse('ok')" class="bg-green-600 hover:bg-green-700 px-3 py-2 rounded text-sm" devinid="11" devin-tagname="BUTTON">
                                     I'm OK
                                 </button>
-                                <button onclick="sendOfficerResponse('need_help')" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded text-sm" devinid="12" devin-tagname="BUTTON">
+                                <button onclick="sendOfficerResponse('need_help')" class="btn-danger px-3 py-2 rounded text-sm" devinid="12" devin-tagname="BUTTON">
                                     Need Help
                                 </button>
-                                <button onclick="sendOfficerResponse('backup')" class="bg-orange-600 hover:bg-orange-700 px-3 py-2 rounded text-sm" devinid="13" devin-tagname="BUTTON">
+                                <button onclick="sendOfficerResponse('backup')" class="btn-warning px-3 py-2 rounded text-sm" devinid="13" devin-tagname="BUTTON">
                                     Need Backup
                                 </button>
                                 <button onclick="sendOfficerResponse('medical')" class="bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded text-sm" devinid="14" devin-tagname="BUTTON">
@@ -2053,7 +2101,7 @@
             const activityContainer = document.getElementById('recentActivity');
             const timestamp = new Date().toLocaleString();
             
-            const colorClass = type === 'CRITICAL' ? 'bg-red-500' : type === 'INFO' ? 'bg-blue-500' : 'bg-gray-500';
+            const colorClass = type === 'CRITICAL' ? 'btn-danger' : type === 'INFO' ? 'btn-primary' : 'bg-gray-500';
             const pulseClass = type === 'CRITICAL' ? 'emergency-pulse' : '';
             
             const activityItem = document.createElement('div');
@@ -2360,10 +2408,10 @@
                         <div class="flex justify-between items-center mt-2">
                             <span class="text-xs bg-${statusColor}-500 px-2 py-1 rounded">${officer.operationalStatus}</span>
                             <div class="flex space-x-3 mt-2">
-                                <button onclick="event.stopPropagation(); sendOfficerMessage(${officer.id})" class="text-xs bg-green-500 hover:bg-green-600 px-3 py-2 rounded flex-1">
+                                <button onclick="event.stopPropagation(); sendOfficerMessage(${officer.id})" class="text-xs btn-success px-3 py-2 rounded flex-1">
                                     Message
                                 </button>
-                                <button onclick="event.stopPropagation(); centerMapOnOfficer(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-3 py-2 rounded flex-1">
+                                <button onclick="event.stopPropagation(); centerMapOnOfficer(${officer.id})" class="text-xs btn-primary px-3 py-2 rounded flex-1">
                                     Locate
                                 </button>
                             </div>
@@ -2446,16 +2494,16 @@
                         </div>
 
                         <div class="officer-button-grid">
-                            <button onclick="viewOfficerDetails(${officer.id})" class="officer-button bg-blue-500 hover:bg-blue-600 text-white">
+                            <button onclick="viewOfficerDetails(${officer.id})" class="officer-button btn-primary">
                                 Details
                             </button>
-                            <button onclick="toggleOfficerStatus(${officer.id})" class="officer-button ${officer.status === 'ON DUTY' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white">
+                            <button onclick="toggleOfficerStatus(${officer.id})" class="officer-button ${officer.status === 'ON DUTY' ? 'btn-danger' : 'btn-success'}"
                                 ${officer.status === 'ON DUTY' ? 'Off Duty' : 'On Duty'}
                             </button>
-                            <button onclick="triggerEmergency()" class="officer-button bg-red-500 hover:bg-red-600 text-white">
+                            <button onclick="triggerEmergency()" class="officer-button btn-danger">
                                 Emergency
                             </button>
-                            <button onclick="clearEmergencyStatus()" class="officer-button bg-red-600 hover:bg-red-700 text-white">
+                            <button onclick="clearEmergencyStatus()" class="officer-button btn-danger">
                                 Clear Emergency
                             </button>
                         </div>
@@ -2692,7 +2740,7 @@ Last Update: ${officer.lastUpdate}`);
                             </div>
                             <p class="text-sm mb-3">${currentCall.description}</p>
                             <p class="text-xs text-gray-400 mb-2">Dispatched: ${currentCall.timestamp}</p>
-                            <button onclick="completeCall(${currentCall.id})" class="bg-green-500 hover:bg-green-600 px-3 py-1 rounded text-sm">Complete Call</button>
+                            <button onclick="completeCall(${currentCall.id})" class="btn-success px-3 py-1 rounded text-sm">Complete Call</button>
                         </div>
                     ` : ''}
                     
@@ -2709,7 +2757,7 @@ Last Update: ${officer.lastUpdate}`);
                                                 <p class="text-xs text-green-400">${call.assignedOfficers.length} officer(s) assigned</p>
                                             ` : ''}
                                         </div>
-                                        <button onclick="assignOfficerToCall(${officer.id}, ${call.id})" class="bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded text-xs">Assign</button>
+                                        <button onclick="assignOfficerToCall(${officer.id}, ${call.id})" class="btn-primary px-2 py-1 rounded text-xs">Assign</button>
                                     </div>
                                 `).join('')}
                             </div>
@@ -2867,7 +2915,7 @@ Last Update: ${officer.lastUpdate}`);
                         `}
                         <div class="flex justify-between items-center mt-2">
                             <span class="text-xs text-gray-400">Last Update: ${officer.lastUpdate}</span>
-                            <button onclick="showOfficerProfileModal(${officer.id})" class="text-xs bg-blue-500 hover:bg-blue-600 px-2 py-1 rounded">View Profile</button>
+                            <button onclick="showOfficerProfileModal(${officer.id})" class="text-xs btn-primary px-2 py-1 rounded">View Profile</button>
                         </div>
                     </div>
                 `;
