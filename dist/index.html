@@ -1753,14 +1753,17 @@
         function toggleTheme() {
             const body = document.body;
             const themeIcon = document.getElementById('themeIcon');
+            const themeButton = document.querySelector('.theme-toggle');
             
             if (body.getAttribute('data-theme') === 'light') {
                 body.removeAttribute('data-theme');
                 themeIcon.textContent = '🌙';
+                themeButton.innerHTML = '<span id="themeIcon">🌙</span> Light Mode';
                 localStorage.setItem('theme', 'dark');
             } else {
                 body.setAttribute('data-theme', 'light');
                 themeIcon.textContent = '☀️';
+                themeButton.innerHTML = '<span id="themeIcon">☀️</span> Dark Mode';
                 localStorage.setItem('theme', 'light');
             }
         }
@@ -1784,9 +1787,14 @@
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme');
+            const themeButton = document.querySelector('.theme-toggle');
             if (savedTheme === 'light') {
                 document.body.setAttribute('data-theme', 'light');
                 document.getElementById('themeIcon').textContent = '☀️';
+                themeButton.innerHTML = '<span id="themeIcon">☀️</span> Dark Mode';
+            } else {
+                document.getElementById('themeIcon').textContent = '🌙';
+                themeButton.innerHTML = '<span id="themeIcon">🌙</span> Light Mode';
             }
             
             showSection('dashboard');
