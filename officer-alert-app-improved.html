@@ -938,8 +938,8 @@
     </div>
 
     <!-- Add Officer Modal -->
-    <div id="addOfficerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4" devin-hidden="true">
-        <div class="bg-gray-800 p-4 md:p-6 rounded-lg w-full max-w-md mx-4" devin-hidden="true">
+    <div id="addOfficerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden p-4" style="z-index: 1100; overflow-y: auto; -webkit-overflow-scrolling: touch;" devin-hidden="true">
+        <div class="bg-gray-800 p-4 md:p-6 rounded-lg w-full max-w-md mx-4 my-8" style="max-height: 90vh; overflow-y: auto;" devin-hidden="true">
             <div class="flex justify-between items-center mb-4" devin-hidden="true">
                 <h2 class="text-xl font-bold text-white" devin-hidden="true">Add New Officer</h2>
                 <button onclick="hideAddOfficerModal()" class="text-gray-400 hover:text-white" devin-hidden="true">
@@ -2105,10 +2105,12 @@
         // Officer Management Functions
         function showAddOfficerModal() {
             document.getElementById('addOfficerModal').classList.remove('hidden');
+            document.querySelector('.theme-toggle').style.display = 'none';
         }
 
         function hideAddOfficerModal() {
             try {
+                document.querySelector('.theme-toggle').style.display = '';
                 const modal = document.getElementById('addOfficerModal');
                 const form = document.getElementById('addOfficerForm');
                 if (modal) {
