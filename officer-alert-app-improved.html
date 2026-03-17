@@ -298,16 +298,21 @@
             .mobile-nav-toggle {
                 display: block;
                 position: fixed;
-                top: 20px;
-                right: 20px;
+                top: 10px;
+                right: 10px;
                 z-index: 1001;
                 background: var(--bg-tertiary);
                 border: 1px solid var(--border-color);
                 color: var(--text-primary);
-                padding: 12px;
+                padding: 8px;
                 border-radius: 8px;
                 cursor: pointer;
                 transition: all 0.2s;
+            }
+            
+            /* Push main content below the mobile nav toggle */
+            main.flex-1 {
+                padding-top: 60px !important;
             }
             
             .mobile-nav-toggle:hover {
@@ -1771,7 +1776,7 @@
             
             const marker = L.marker([officer.location.lat, officer.location.lng], { icon: officerIcon })
                 .addTo(map)
-                .bindPopup(`<b>${officer.firstName} ${officer.lastName}</b><br>Badge #${officer.badgeNumber}<br>Status: ${officer.status}<br>Operational: ${officer.operationalStatus}${callInfo}`)
+                .bindPopup(`<b>${officer.firstName} ${officer.lastName}</b><br>Badge #${officer.badgeNumber}<br>HR: ${officer.heartRate} BPM | BP: ${officer.bloodPressure}<br>Temp: ${officer.skinTemperature}°F | Stress: ${officer.stressLevel}/10<br>Status: ${officer.status} | ${officer.operationalStatus}${callInfo}`)
                 .on('click', function() {
                     showMapProfile(officer.id);
                 });
